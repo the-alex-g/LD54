@@ -4,13 +4,12 @@ extends Construction
 signal spawn(path, from, spawner)
 
 @export var path : String
-@export var frequency := 1
+@export var frequency := 10
 
 var children := 0
 
 
 func _ready()->void:
-	print("spawn ", position, " ", global_position)
 	var timer := Timer.new()
 	add_child(timer)
 	timer.timeout.connect(_on_timer_timeout)

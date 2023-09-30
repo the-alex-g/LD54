@@ -1,7 +1,56 @@
-[gd_scene load_steps=2 format=3 uid="uid://dy2kaphefxume"]
+[gd_scene load_steps=9 format=3 uid="uid://dy2kaphefxume"]
 
 [ext_resource type="Script" path="res://constructions/spawner.gd" id="1_wjujb"]
+[ext_resource type="Texture2D" uid="uid://ch1dbnvwv4cel" path="res://constructions/images/harvester_spawn.png" id="2_jkown"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yoabu"]
+atlas = ExtResource("2_jkown")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a3gt7"]
+atlas = ExtResource("2_jkown")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_54gsf"]
+atlas = ExtResource("2_jkown")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0enb"]
+atlas = ExtResource("2_jkown")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4abwr"]
+atlas = ExtResource("2_jkown")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4qe6i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yoabu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a3gt7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_54gsf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b0enb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4abwr")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="HarvesterSpawn" type="Node2D"]
 script = ExtResource("1_wjujb")
 path = "res://constructions/harvester.tscn"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_4qe6i")
+autoplay = "default"

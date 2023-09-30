@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://dj8e8nnteri6g"]
+
+[ext_resource type="Script" path="res://constructions/generator.gd" id="1_gqsp3"]
+[ext_resource type="Texture2D" uid="uid://cr1q1drvded24" path="res://constructions/images/detritivores.png" id="2_qj6fs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldor5"]
+atlas = ExtResource("2_qj6fs")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogfdi"]
+atlas = ExtResource("2_qj6fs")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_brctr"]
+atlas = ExtResource("2_qj6fs")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3tx7y"]
+atlas = ExtResource("2_qj6fs")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hcvtc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ldor5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogfdi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_brctr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3tx7y")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Detritivores" type="Node2D"]
+script = ExtResource("1_gqsp3")
+resources = {
+"chitin": 1,
+"light": 0,
+"threads": 0
+}
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_hcvtc")
+autoplay = "default"

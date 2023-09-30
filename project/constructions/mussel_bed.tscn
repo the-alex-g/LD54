@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://crtnw7jhkfu8n"]
+
+[ext_resource type="Script" path="res://constructions/generator.gd" id="1_opqlx"]
+[ext_resource type="Texture2D" uid="uid://bbeyj7xy26cky" path="res://constructions/images/mussel_bed.png" id="2_x1ll0"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dpgbf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_x1ll0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="MusselBed" type="Node2D"]
+script = ExtResource("1_opqlx")
+resources = {
+"chitin": 0,
+"light": 0,
+"threads": 1
+}
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_dpgbf")
+autoplay = "default"

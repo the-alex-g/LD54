@@ -8,15 +8,12 @@ var target := Vector2.INF
 var potential_targets : Array[Vector2] = [] : set = _set_potential_targets
 
 
-func _ready()->void:
-	print(global_position)
-
-
 func _process(delta:float)->void:
 	if resources_collected == 3 and potential_targets.size() > 0:
 		_find_new_target()
 	if target != Vector2.INF:
 		global_position = lerp(global_position, target, 0.5 * delta)
+		look_at(target)
 		if target.distance_squared_to(global_position) < 1.0:
 			_reached_target()
 

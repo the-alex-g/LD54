@@ -6,6 +6,8 @@ signal build_abort
 
 const CONSTRUCTIONS := [
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"},
+	{"name":"Detritivores", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{}, "path":"res://constructions/detritivores.tscn"},
+	{"name":"Mussel Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{}, "path":"res://constructions/mussel_bed.tscn"},
 	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{}, "path":"res://constructions/harvester.tscn"},
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{}, "path":"res://constructions/harvester_spawn.tscn"},
 ]

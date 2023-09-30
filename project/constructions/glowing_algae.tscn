@@ -1,7 +1,43 @@
-[gd_scene load_steps=3 format=3 uid="uid://dha8g5ttkq2lu"]
+[gd_scene load_steps=8 format=3 uid="uid://dha8g5ttkq2lu"]
 
 [ext_resource type="Script" path="res://constructions/generator.gd" id="1_eygn1"]
 [ext_resource type="Texture2D" uid="uid://c67n0d17h7oyv" path="res://constructions/images/glowing_algae.png" id="2_digay"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h243b"]
+atlas = ExtResource("2_digay")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q1llv"]
+atlas = ExtResource("2_digay")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t7m6l"]
+atlas = ExtResource("2_digay")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xqlfe"]
+atlas = ExtResource("2_digay")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gj5xv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h243b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q1llv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t7m6l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xqlfe")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="GlowingAlgae" type="Node2D"]
 script = ExtResource("1_eygn1")
@@ -11,5 +47,7 @@ resources = {
 "threads": 0
 }
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("2_digay")
+[node name="Sprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_gj5xv")
+autoplay = "default"
