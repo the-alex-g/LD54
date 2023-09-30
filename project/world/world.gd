@@ -7,8 +7,8 @@ signal build_invalid(location)
 signal construction_built
 signal construction_destroyed
 
-@export var min_bubble_radius := 4
-@export var max_bubble_radius := 8
+@export var min_sphere_radius := 4
+@export var max_sphere_radius := 8
 
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
@@ -21,11 +21,11 @@ var _seekers : Array[Seeker] = []
 
 
 func _ready()->void:
-	_generate_bubble(Vector2i.ZERO, round(lerp(min_bubble_radius, max_bubble_radius, randf())))
+	_generate_sphere(Vector2i.ZERO, round(lerp(min_sphere_radius, max_sphere_radius, randf())))
 	_update_build_anchors(_player.global_position)
 
 
-func _generate_bubble(at:Vector2i, radius:int)->void:
+func _generate_sphere(at:Vector2i, radius:int)->void:
 	for x in range(-radius, radius + 1):
 		for y in range(-radius, radius + 1):
 			if pow(x, 2) + pow(y, 2) < pow(radius + 1, 2) and pow(x, 2) + pow(y, 2) >= pow(radius, 2):

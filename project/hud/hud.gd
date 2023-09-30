@@ -109,6 +109,26 @@ func _update_resource_labels()->void:
 	_light_label.text = str(_resources.light)
 
 
+func _get_shared_anchors(x:Array, y:Array)->Array:
+	var shared_anchors : Array = []
+	for anchor in x:
+		match anchor:
+			Construction.ANCHOR_ALL:
+				shared_anchors = y
+				return shared_anchors
+			Construction.ANCHOR_NONE:
+				return []
+			Construction.ANCHOR_SIDE:
+				if y.has(Construction.ANCHOR_LEFT):
+					shared_anchors.append(Construction.ANCHOR_LEFT)
+				if y.has(Construction.ANCHOR_RIGHT):
+					shared_anchors.append(Construction.ANCHOR_RIGHT)
+			_:
+				if y.has(anchor):
+					shared_anchors.append(anchor)
+	return shared_anchors
+
+
 func _on_world_update_resources(resource:String)->void:
 	_resources[resource] += 1
 	_update_resource_labels()
@@ -126,6 +146,6 @@ func _on_build_list_item_selected(index:int)->void:
 	if selected_name != "Clear Space":
 		var selected_info := _get_construction_by_name(selected_name)
 		_spend_resources(selected_info.cost)
-		build.emit(selected_info.path, _build_location, _anchors)
+		build.emit(selected_info.path, _build_location, _get_shared_anchors(selected_info.anchors, _anchors))
 	else:
 		clear.emit(_build_location)
