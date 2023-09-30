@@ -4,9 +4,11 @@ signal update_anchors(anchors, location)
 signal open_build_menu
 signal update_resources(new_resources)
 signal build_invalid
+signal construction_built
+signal construction_destroyed
 
-@export var min_bubble_radius := 8
-@export var max_bubble_radius := 16
+@export var min_bubble_radius := 4
+@export var max_bubble_radius := 8
 
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
@@ -17,7 +19,7 @@ var _enemies : Array[Enemy] = []
 
 
 func _ready()->void:
-	_generate_bubble(Vector2i.ZERO, 8)
+	_generate_bubble(Vector2i.ZERO, round(lerp(min_bubble_radius, max_bubble_radius, randf())))
 	_update_build_anchors(_player.global_position)
 
 
@@ -72,6 +74,8 @@ func _build_construction(path:String, location:Vector2i, anchors:Array)->Constru
 	_update_harvester_targets()
 	_update_enemy_targets()
 	
+	construction_built.emit()
+	
 	return construction
 
 
@@ -90,8 +94,9 @@ func _get_generator_locations()->Array[Vector2]:
 	return generator_locations
 
 
-func _spawn_enemy()->void:
+func _spawn_enemy(at:Vector2)->void:
 	var enemy : Enemy = load("res://enemies/enemy.tscn").instantiate()
+	enemy.global_position = at
 	add_child(enemy)
 	_enemies.append(enemy)
 	enemy.died.connect(_on_enemy_died.bind(enemy))
@@ -126,7 +131,12 @@ func _on_construction_died(construction:Construction)->void:
 		_update_harvester_targets()
 	if construction is Harvester:
 		_harvesters.erase(construction)
+	construction_destroyed.emit()
 
 
 func _on_spawner_spawn(path:String, from:Vector2, spawner:Spawner)->void:
 	_build_construction(path, _tilemap.local_to_map(from), [Construction.ANCHOR_NONE]).died.connect(Callable(spawner, "_on_child_died"))
+
+
+func _on_enemy_spawner_spawn_enemy(from:Vector2)->void:
+	_spawn_enemy(from)

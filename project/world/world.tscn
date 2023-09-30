@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://cnaq4kembliio"]
+[gd_scene load_steps=8 format=3 uid="uid://cnaq4kembliio"]
 
 [ext_resource type="Script" path="res://world/world.gd" id="1_dd1xr"]
 [ext_resource type="Texture2D" uid="uid://c7erpspbqd4sc" path="res://world/tiles.png" id="2_41yr6"]
 [ext_resource type="PackedScene" uid="uid://b4wxacw1wwcej" path="res://player/player.tscn" id="3_xwo8a"]
 [ext_resource type="PackedScene" uid="uid://cwbv68d7g3kqc" path="res://hud/hud.tscn" id="4_8figk"]
+[ext_resource type="PackedScene" uid="uid://bdbb13846hc6s" path="res://enemies/enemy_spawner.tscn" id="5_6gxd5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ubqeg"]
 texture = ExtResource("2_41yr6")
@@ -25,9 +26,14 @@ format = 2
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[node name="EnemySpawner" parent="." instance=ExtResource("5_6gxd5")]
+
 [connection signal="build_invalid" from="." to="HUD" method="_on_world_build_invalid"]
+[connection signal="construction_built" from="." to="EnemySpawner" method="_on_world_construction_built"]
+[connection signal="construction_destroyed" from="." to="EnemySpawner" method="_on_world_construction_destroyed"]
 [connection signal="open_build_menu" from="." to="HUD" method="_on_world_open_build_menu"]
 [connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
 [connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]
 [connection signal="resource_collected" from="Player" to="." method="_on_resource_collected"]
 [connection signal="build" from="HUD" to="." method="_on_hud_build"]
+[connection signal="spawn_enemy" from="EnemySpawner" to="." method="_on_enemy_spawner_spawn_enemy"]
