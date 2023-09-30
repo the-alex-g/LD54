@@ -16,6 +16,8 @@ signal construction_destroyed
 var _points_occupied : Dictionary = {}
 var _harvesters : Array[Harvester] = []
 var _enemies : Array[Enemy] = []
+var _jellyfish : Array[Jellyfish] = []
+var _seekers : Array[Seeker] = []
 
 
 func _ready()->void:
@@ -67,11 +69,16 @@ func _build_construction(path:String, location:Vector2i, anchors:Array)->Constru
 	if construction is Harvester:
 		construction.resource_collected.connect(_on_resource_collected)
 		_harvesters.append(construction)
-	
-	if construction is Spawner:
+		_update_harvester_targets()
+	elif construction is Spawner:
 		construction.spawn.connect(_on_spawner_spawn)
+	elif construction is Jellyfish:
+		_jellyfish.append(construction)
+	elif construction is Generator:
+		_update_harvester_targets()
+	elif construction is Seeker:
+		_seekers.append(construction)
 	
-	_update_harvester_targets()
 	_update_enemy_targets()
 	
 	construction_built.emit()
@@ -101,20 +108,28 @@ func _spawn_enemy(at:Vector2)->void:
 	_enemies.append(enemy)
 	enemy.died.connect(_on_enemy_died.bind(enemy))
 	
-	if _points_occupied.size() > 0:
-		enemy.potential_targets = _points_occupied.values()
+	_update_enemy_targets()
+	_update_seeker_targets()
 
 
 func _update_enemy_targets()->void:
 	var potential_targets := []
 	potential_targets.append_array(_points_occupied.values())
 	potential_targets.append_array(_harvesters)
+	potential_targets.append_array(_jellyfish)
+	potential_targets.append_array(_seekers)
 	for enemy in _enemies:
 		enemy.potential_targets = potential_targets
 
 
+func _update_seeker_targets()->void:
+	for seeker in _seekers:
+		seeker.potential_targets = _enemies
+
+
 func _on_enemy_died(enemy:Enemy)->void:
 	_enemies.erase(enemy)
+	_update_seeker_targets()
 
 
 func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
@@ -128,10 +143,16 @@ func _on_resource_collected(resource_type:String)->void:
 func _on_construction_died(construction:Construction)->void:
 	_points_occupied.erase(construction)
 	if construction is Generator:
-		_update_harvester_targets()
-	if construction is Harvester:
-		_harvesters.erase(construction)
+			_update_harvester_targets()
+	elif construction is Jellyfish:
+			_jellyfish.erase(construction)
+	elif construction is Harvester:
+			_harvesters.erase(construction)
+	elif construction is Seeker:
+			_seekers.erase(construction)
+	
 	construction_destroyed.emit()
+	_update_enemy_targets()
 
 
 func _on_spawner_spawn(path:String, from:Vector2, spawner:Spawner)->void:

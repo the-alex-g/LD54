@@ -3,8 +3,7 @@ extends Area2D
 
 signal died
 
-@export var damage := 1
-@export var cooldown := 0.5
+@export var cooldown := 5.0
 
 var target : Construction = null
 var potential_targets := []
@@ -37,7 +36,7 @@ func _clean_potential_targets()->void:
 
 
 func _damage_target()->void:
-	target.damage(damage)
+	target.kill()
 	_can_damage = false
 	_cooldown_timer.start()
 

@@ -5,6 +5,7 @@ signal spawn(path, from, spawner)
 
 @export var path : String
 @export var frequency := 10
+@export var max_children := 3
 
 var children := 0
 
@@ -17,7 +18,7 @@ func _ready()->void:
 
 
 func _on_timer_timeout()->void:
-	if children < 3:
+	if children < max_children:
 		spawn.emit(path, global_position, self)
 		children += 1
 

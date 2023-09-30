@@ -3,6 +3,8 @@ extends Node2D
 
 signal spawn_enemy(from)
 
+@export var spawn_time_variation := 2.0
+
 var _total_constructions := 0
 var _spawn_rate := 0.0
 
@@ -13,10 +15,9 @@ func _update_spawn_rate()->void:
 	if _total_constructions > 3:
 		_spawn_rate = clamp(lerp(10, 1, (_total_constructions - 3) / 10.0), 1.0, 10.0)
 		if _spawn_timer.is_stopped():
-			_spawn_timer.start(_spawn_rate)
+			_spawn_timer.start(_spawn_rate + randf() * spawn_time_variation)
 	elif not _spawn_timer.is_stopped():
 		_spawn_timer.stop()
-	print(_spawn_rate)
 
 
 func _on_timer_timeout():
