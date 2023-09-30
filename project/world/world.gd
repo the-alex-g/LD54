@@ -2,6 +2,7 @@ extends Node2D
 
 signal update_anchors(anchors, location)
 signal open_build_menu
+signal update_resources(new_resources)
 
 enum Anchors {TOP, BOTTOM, SIDE}
 
@@ -38,8 +39,21 @@ func _update_build_anchors(at:Vector2)->void:
 	elif _tilemap.get_cell_source_id(0, map_coords + Vector2i.RIGHT) > -1:
 		valid_build_anchors.append(Anchors.SIDE)
 	
-	update_anchors.emit(valid_build_anchors, map_coords)
+	update_anchors.emit(valid_build_anchors, at)
 	
 	# run this function every .1 seconds
 	await get_tree().create_timer(0.1).timeout
 	_update_build_anchors(_player.global_position)
+
+
+func _on_player_build()->void:
+	open_build_menu.emit()
+
+
+func _on_hud_build(object:Dictionary, location:Vector2)->void:
+	print("yay bulding")
+	_player.paused = false
+
+
+func _on_hud_build_abort()->void:
+	_player.paused = false

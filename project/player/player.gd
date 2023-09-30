@@ -7,11 +7,15 @@ signal build()
 @export var squish := 1
 
 var x_direction := 1 : set = _set_x_direction
+var paused := false : set = _set_paused
 
 @onready var _sprite := $Nautilus
 
 
 func _physics_process(delta:float)->void:
+	if paused:
+		return
+	
 	_process_actions(delta)
 	
 	move_and_slide()
@@ -33,7 +37,13 @@ func _process_actions(delta:float)->void:
 
 
 func _build()->void:
+	_set_paused(true)
 	build.emit()
+
+
+func _set_paused(value:bool)->void:
+	velocity = Vector2.ZERO
+	paused = value
 
 
 func _set_x_direction(value:int)->void:

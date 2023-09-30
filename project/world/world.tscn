@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cnaq4kembliio"]
+[gd_scene load_steps=7 format=3 uid="uid://cnaq4kembliio"]
 
 [ext_resource type="Script" path="res://world/world.gd" id="1_dd1xr"]
 [ext_resource type="Texture2D" uid="uid://c7erpspbqd4sc" path="res://world/tiles.png" id="2_41yr6"]
 [ext_resource type="PackedScene" uid="uid://b4wxacw1wwcej" path="res://player/player.tscn" id="3_xwo8a"]
+[ext_resource type="PackedScene" uid="uid://cwbv68d7g3kqc" path="res://hud/hud.tscn" id="4_8figk"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ubqeg"]
 texture = ExtResource("2_41yr6")
@@ -22,4 +23,11 @@ format = 2
 
 [node name="Player" parent="." instance=ExtResource("3_xwo8a")]
 
+[node name="HUD" parent="." instance=ExtResource("4_8figk")]
+
+[connection signal="open_build_menu" from="." to="HUD" method="_on_world_open_build_menu"]
+[connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
+[connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]
 [connection signal="build" from="Player" to="." method="_on_player_build"]
+[connection signal="build" from="HUD" to="." method="_on_hud_build"]
+[connection signal="build_abort" from="HUD" to="." method="_on_hud_build_abort"]
