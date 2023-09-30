@@ -1,7 +1,7 @@
 class_name Generator
 extends Construction
 
-@export var frequency := 1.0
+@export var frequency := 5.0
 @export var resources := {
 	"light":0,
 	"chitin":0,

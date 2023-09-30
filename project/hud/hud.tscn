@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://cwbv68d7g3kqc"]
+[gd_scene load_steps=5 format=3 uid="uid://cwbv68d7g3kqc"]
 
 [ext_resource type="Script" path="res://hud/hud.gd" id="1_unrdn"]
+[ext_resource type="Texture2D" uid="uid://cedbk88odemas" path="res://hud/chitin.png" id="2_dct8p"]
+[ext_resource type="Texture2D" uid="uid://dissdnn8eqfni" path="res://hud/threads.png" id="3_f2dgb"]
+[ext_resource type="Texture2D" uid="uid://b7n2k5tvys27o" path="res://hud/light.png" id="4_155q0"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_unrdn")
@@ -19,5 +22,36 @@ anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 100.0
 grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 100.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="Tick" type="TextureRect" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("2_dct8p")
+
+[node name="TickLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="Threads" type="TextureRect" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("3_f2dgb")
+
+[node name="ThreadLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="Light" type="TextureRect" parent="HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+texture = ExtResource("4_155q0")
+
+[node name="LightLabel" type="Label" parent="HBoxContainer"]
+layout_mode = 2
 
 [connection signal="item_selected" from="Control/BuildList" to="." method="_on_build_list_item_selected"]

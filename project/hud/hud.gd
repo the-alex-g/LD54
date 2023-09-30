@@ -4,19 +4,26 @@ extends CanvasLayer
 signal build(info, location, anchors)
 
 const CONSTRUCTIONS := [
-	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"},
-	{"name":"Detritivores", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{}, "path":"res://constructions/detritivores.tscn"},
-	{"name":"Mussel Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{}, "path":"res://constructions/mussel_bed.tscn"},
-	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{}, "path":"res://constructions/harvester.tscn"},
-	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{}, "path":"res://constructions/harvester_spawn.tscn"},
+	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"chitin":2, "threads":2}, "path":"res://constructions/glowing_algae.tscn"},
+	{"name":"Detritivores", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "threads":2}, "path":"res://constructions/detritivores.tscn"},
+	{"name":"Mussel Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":2, "chitin":2}, "path":"res://constructions/mussel_bed.tscn"},
+	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":2, "chitin":2, "threads":2}, "path":"res://constructions/harvester.tscn"},
+	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 ]
 
 var _build_location := Vector2i.ZERO
 var _anchors := []
-var _resources := {"light":0, "chitin":0, "threads":0,}
+var _resources := {"light":4, "chitin":4, "threads":4,}
 var _can_build := true
 
 @onready var _build_list : ItemList = $Control/BuildList
+@onready var _chitin_label : Label = $HBoxContainer/TickLabel
+@onready var _thread_label : Label = $HBoxContainer/ThreadLabel
+@onready var _light_label : Label = $HBoxContainer/LightLabel
+
+
+func _ready()->void:
+	_update_resource_labels()
 
 
 func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
@@ -89,10 +96,18 @@ func _get_construction_by_name(construction_name:String)->Dictionary:
 func _spend_resources(cost:Dictionary)->void:
 	for resource in cost:
 		_resources[resource] -= cost[resource]
+	_update_resource_labels()
+
+
+func _update_resource_labels()->void:
+	_chitin_label.text = str(_resources.chitin)
+	_thread_label.text = str(_resources.threads)
+	_light_label.text = str(_resources.light)
 
 
 func _on_world_update_resources(resource:String)->void:
 	_resources[resource] += 1
+	_update_resource_labels()
 
 
 func _on_world_build_invalid()->void:
