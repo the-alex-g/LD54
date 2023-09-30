@@ -3,12 +3,15 @@ extends Node2D
 signal update_anchors(anchors, location)
 signal open_build_menu
 signal update_resources(new_resources)
+signal build_invalid
 
 @export var min_bubble_radius := 8
 @export var max_bubble_radius := 16
 
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
+
+var _points_occupied : PackedVector2Array = []
 
 
 func _ready()->void:
@@ -28,16 +31,19 @@ func _update_build_anchors(at:Vector2)->void:
 	
 	var valid_build_anchors := []
 	
-	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.DOWN) > -1:
-		valid_build_anchors.append(Construction.ANCHOR_BOTTOM)
-	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.UP) > -1:
-		valid_build_anchors.append(Construction.ANCHOR_TOP)
-	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.LEFT) > -1:
-		valid_build_anchors.append(Construction.ANCHOR_LEFT)
-	elif _tilemap.get_cell_source_id(0, map_coords + Vector2i.RIGHT) > -1:
-		valid_build_anchors.append(Construction.ANCHOR_RIGHT)
+	if _points_occupied.has(map_coords):
+		build_invalid.emit()
+	else:
+		if _tilemap.get_cell_source_id(0, map_coords + Vector2i.DOWN) > -1:
+			valid_build_anchors.append(Construction.ANCHOR_BOTTOM)
+		if _tilemap.get_cell_source_id(0, map_coords + Vector2i.UP) > -1:
+			valid_build_anchors.append(Construction.ANCHOR_TOP)
+		if _tilemap.get_cell_source_id(0, map_coords + Vector2i.LEFT) > -1:
+			valid_build_anchors.append(Construction.ANCHOR_LEFT)
+		elif _tilemap.get_cell_source_id(0, map_coords + Vector2i.RIGHT) > -1:
+			valid_build_anchors.append(Construction.ANCHOR_RIGHT)
 	
-	update_anchors.emit(valid_build_anchors, map_coords)
+		update_anchors.emit(valid_build_anchors, map_coords)
 	
 	# run this function every .1 seconds
 	await get_tree().create_timer(0.1).timeout
@@ -57,6 +63,7 @@ func _on_player_build()->void:
 
 func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
 	_build_construction(path, location, anchors)
+	_points_occupied.append(location)
 	_player.paused = false
 
 

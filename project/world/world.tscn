@@ -25,6 +25,7 @@ format = 2
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
+[connection signal="build_invalid" from="." to="HUD" method="_on_world_build_invalid"]
 [connection signal="open_build_menu" from="." to="HUD" method="_on_world_open_build_menu"]
 [connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
 [connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]

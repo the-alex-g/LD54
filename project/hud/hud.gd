@@ -15,6 +15,7 @@ var _build_location := Vector2i.ZERO
 var _build_menu_open := false : set = _set_build_menu_open
 var _anchors := []
 var _resources := {"light":0, "chitin":0, "threads":0,}
+var _can_build := true
 
 @onready var _build_list : ItemList = $Control/BuildList
 @onready var _build_menu : ItemList = $Control/BuildMenu
@@ -29,6 +30,7 @@ func _input(event:InputEvent)->void:
 
 
 func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
+	_can_build = true
 	_build_list.clear()
 	_anchors = anchors
 	_build_location = location
@@ -101,11 +103,14 @@ func _set_build_menu_open(value:bool)->void:
 
 
 func _on_world_open_build_menu()->void:
-	_build_menu.clear()
+	if _can_build and _build_list.item_count > 0:
+		_build_menu.clear()
 	
-	for i in _build_list.item_count:
-		_build_menu.add_item(_build_list.get_item_text(i))
-	_set_build_menu_open(true)
+		for i in _build_list.item_count:
+			_build_menu.add_item(_build_list.get_item_text(i))
+		_set_build_menu_open(true)
+	else:
+		build_abort.emit()
 
 
 func _on_world_update_resources(resource:String)->void:
@@ -118,3 +123,8 @@ func _on_build_menu_item_selected(index:int)->void:
 	_spend_resources(selected_info.cost)
 	build.emit(selected_info.path, _build_location, _anchors)
 	_set_build_menu_open(false)
+
+
+func _on_world_build_invalid()->void:
+	_build_list.clear()
+	_can_build = false
