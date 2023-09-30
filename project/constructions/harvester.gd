@@ -13,7 +13,7 @@ func _process(delta:float)->void:
 		_find_new_target()
 	if target != Vector2.INF:
 		global_position = lerp(global_position, target, 0.5 * delta)
-		if target.distance_squared_to(global_position) < 0.01:
+		if target.distance_squared_to(global_position) < 1.0:
 			_reached_target()
 
 

@@ -6,9 +6,12 @@ signal resource_collected(resource_type)
 
 @export var speed := 150.0
 @export var squish := 1
+@export var cooldown_time := 1.0
+@export var projectile_range := 64.0
 
 var x_direction := 1 : set = _set_x_direction
 var paused := false : set = _set_paused
+var _can_attack := true
 
 @onready var _sprite := $Nautilus
 
@@ -35,6 +38,20 @@ func _process_actions(delta:float)->void:
 	
 	if Input.is_action_just_pressed("build"):
 		_build()
+	
+	if Input.is_action_just_pressed("attack") and _can_attack:
+		_attack()
+
+
+func _attack()->void:
+	var projectile := preload("res://player/projectile.tscn").instantiate()
+	projectile.position = global_position
+	get_parent().add_child(projectile)
+	projectile.target = global_position + Vector2(projectile_range, 0) * sign(_sprite.scale.x)
+	
+	_can_attack = false
+	await get_tree().create_timer(cooldown_time).timeout
+	_can_attack = true
 
 
 func _build()->void:
