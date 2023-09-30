@@ -1,11 +1,12 @@
 extends Node2D
 
 signal update_anchors(anchors, location)
-signal open_build_menu
-signal update_resources(new_resources)
+signal update_resources(new_resources, sphere_index)
 signal build_invalid(location)
-signal construction_built
-signal construction_destroyed
+signal construction_built(sphere_index)
+signal construction_destroyed(sphere_index)
+signal changed_spheres(new_sphere_index, sphere_connected)
+signal update_connected_spheres(connected_spheres)
 
 @export var min_sphere_radius := 4
 @export var max_sphere_radius := 8
@@ -13,11 +14,14 @@ signal construction_destroyed
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
 
-var _points_occupied : Dictionary = {}
-var _harvesters : Array[Harvester] = []
-var _enemies : Array[Enemy] = []
-var _jellyfish : Array[Jellyfish] = []
-var _seekers : Array[Seeker] = []
+var _points_occupied := []
+var _harvesters := []
+var _enemies : = []
+var _jellyfish := []
+var _seekers := []
+var _spheres := 0
+var _current_sphere_index := -1
+var _connected_spheres := []
 
 
 func _ready()->void:
@@ -25,11 +29,32 @@ func _ready()->void:
 	_update_build_anchors(_player.global_position)
 
 
-func _generate_sphere(at:Vector2i, radius:int)->void:
+func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
+	_spheres += 1
+	_harvesters.append([])
+	_points_occupied.append({})
+	_jellyfish.append([])
+	_seekers.append([])
+	_enemies.append([])
+	if go_to:
+		_change_sphere(_spheres - 1)
 	for x in range(-radius, radius + 1):
 		for y in range(-radius, radius + 1):
 			if pow(x, 2) + pow(y, 2) < pow(radius + 1, 2) and pow(x, 2) + pow(y, 2) >= pow(radius, 2):
 				_tilemap.set_cell(0, Vector2i(x, y) + at, 0, Vector2i.ZERO)
+	
+	var enemy_spawner : EnemySpawner = load("res://enemies/enemy_spawner.tscn").instantiate()
+	enemy_spawner.sphere_index = _current_sphere_index
+	construction_destroyed.connect(Callable(enemy_spawner, "_on_world_construction_destroyed"))
+	construction_built.connect(Callable(enemy_spawner, "_on_world_construction_built"))
+	enemy_spawner.global_position = _tilemap.map_to_local(at)
+	enemy_spawner.spawn_enemy.connect(_on_enemy_spawner_spawn_enemy)
+	add_child(enemy_spawner)
+
+
+func _change_sphere(to:int)->void:
+	_current_sphere_index = to
+	changed_spheres.emit(_current_sphere_index)
 
 
 func _update_build_anchors(at:Vector2)->void:
@@ -37,7 +62,7 @@ func _update_build_anchors(at:Vector2)->void:
 	
 	var valid_build_anchors := []
 	
-	if _points_occupied.has(map_coords):
+	if _points_occupied[_current_sphere_index].has(map_coords):
 		build_invalid.emit(map_coords)
 	else:
 		if _tilemap.get_cell_source_id(0, map_coords + Vector2i.DOWN) > -1:
@@ -56,56 +81,63 @@ func _update_build_anchors(at:Vector2)->void:
 	_update_build_anchors(_player.global_position)
 
 
-func _build_construction(path:String, location:Vector2i, anchors:Array)->Construction:
+func _build_construction(path:String, location:Vector2i, anchors:Array, sphere_index:int)->Construction:
 	var construction : Construction = load(path).instantiate()
 	construction.global_position = _tilemap.map_to_local(location)
 	if anchors.size() > 0:
-		_points_occupied[location] = construction
+		_points_occupied[sphere_index][location] = construction
 	add_child(construction)
 	construction.call_deferred("set_anchors", anchors)
+	construction.sphere_index = sphere_index
 	
 	construction.died.connect(_on_construction_died.bind(construction))
 	
 	if construction is Harvester:
 		construction.resource_collected.connect(_on_resource_collected)
-		_harvesters.append(construction)
+		_harvesters[sphere_index].append(construction)
 		_update_harvester_targets()
 	elif construction is Spawner:
 		construction.spawn.connect(_on_spawner_spawn)
 	elif construction is Jellyfish:
-		_jellyfish.append(construction)
+		_jellyfish[sphere_index].append(construction)
 	elif construction is Generator:
 		_update_harvester_targets()
 	elif construction is Seeker:
-		_seekers.append(construction)
+		_seekers[sphere_index].append(construction)
+	elif construction is ThreadGate:
+		_connected_spheres.append(_current_sphere_index)
+		update_connected_spheres.emit(_connected_spheres)
+		construction.use_gate.connect(_on_thread_gate_use_gate)
 	
 	_update_enemy_targets()
 	
-	construction_built.emit()
+	construction_built.emit(sphere_index)
 	
 	return construction
 
 
 func _update_harvester_targets()->void:
-	var generator_locations := _get_generator_locations()
-	for harvester in _harvesters:
-		harvester.potential_targets = generator_locations
+	for group in _harvesters:
+		var generator_locations := _get_generator_locations(_harvesters.find(group))
+		for harvester in group:
+			harvester.potential_targets = generator_locations
 
 
-func _get_generator_locations()->Array[Vector2]:
+func _get_generator_locations(sphere_index)->Array[Vector2]:
 	var generator_locations : Array[Vector2] = []
-	for location in _points_occupied:
-		if is_instance_valid(_points_occupied[location]):
-			if _points_occupied[location] is Generator:
+	for location in _points_occupied[sphere_index]:
+		if is_instance_valid(_points_occupied[sphere_index][location]):
+			if _points_occupied[sphere_index][location] is Generator:
 				generator_locations.append(_tilemap.map_to_local(location))
 	return generator_locations
 
 
-func _spawn_enemy(at:Vector2)->void:
+func _spawn_enemy(at:Vector2, sphere_index:int)->void:
 	var enemy : Enemy = load("res://enemies/enemy.tscn").instantiate()
 	enemy.global_position = at
+	enemy.sphere_index = sphere_index
 	add_child(enemy)
-	_enemies.append(enemy)
+	_enemies[sphere_index].append(enemy)
 	enemy.died.connect(_on_enemy_died.bind(enemy))
 	
 	_update_enemy_targets()
@@ -113,55 +145,65 @@ func _spawn_enemy(at:Vector2)->void:
 
 
 func _update_enemy_targets()->void:
-	var potential_targets := []
-	potential_targets.append_array(_points_occupied.values())
-	potential_targets.append_array(_harvesters)
-	potential_targets.append_array(_jellyfish)
-	potential_targets.append_array(_seekers)
-	for enemy in _enemies:
-		enemy.potential_targets = potential_targets
+	for group in _enemies:
+		var local_sphere_index = _enemies.find(group) - 1
+		var potential_targets := []
+		potential_targets.append_array(_points_occupied[local_sphere_index].values())
+		potential_targets.append_array(_harvesters[local_sphere_index])
+		potential_targets.append_array(_jellyfish[local_sphere_index])
+		potential_targets.append_array(_seekers[local_sphere_index])
+		for enemy in group:
+			enemy.potential_targets = potential_targets
 
 
 func _update_seeker_targets()->void:
-	for seeker in _seekers:
-		seeker.potential_targets = _enemies
+	for group in _seekers:
+		for seeker in group:
+			seeker.potential_targets = _enemies[seeker.sphere_index]
 
 
 func _on_enemy_died(enemy:Enemy)->void:
-	_enemies.erase(enemy)
+	_enemies[enemy.sphere_index].erase(enemy)
 	_update_seeker_targets()
 
 
 func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
-	_build_construction(path, location, anchors)
+	_build_construction(path, location, anchors, _current_sphere_index)
 
 
 func _on_resource_collected(resource_type:String)->void:
-	update_resources.emit(resource_type)
+	update_resources.emit(resource_type, _current_sphere_index)
 
 
 func _on_construction_died(construction:Construction)->void:
-	_points_occupied.erase(_tilemap.local_to_map(construction.global_position))
+	_points_occupied[construction.sphere_index].erase(_tilemap.local_to_map(construction.global_position))
 	if construction is Generator:
 		_update_harvester_targets()
 	elif construction is Jellyfish:
-		_jellyfish.erase(construction)
+		_jellyfish[construction.sphere_index].erase(construction)
 	elif construction is Harvester:
-		_harvesters.erase(construction)
+		_harvesters[construction.sphere_index].erase(construction)
 	elif construction is Seeker:
-		_seekers.erase(construction)
+		_seekers[construction.sphere_index].erase(construction)
+	elif construction is ThreadGate:
+		_connected_spheres.erase(construction.sphere_index)
+		update_connected_spheres.emit(_connected_spheres)
 	
-	construction_destroyed.emit()
+	construction_destroyed.emit(construction.sphere_index)
 	_update_enemy_targets()
 
 
 func _on_spawner_spawn(path:String, from:Vector2, spawner:Spawner)->void:
-	_build_construction(path, _tilemap.local_to_map(from), [Construction.ANCHOR_NONE]).died.connect(Callable(spawner, "_on_child_died"))
+	_build_construction(path, _tilemap.local_to_map(from), [Construction.ANCHOR_NONE], spawner.sphere_index).died.connect(Callable(spawner, "_on_child_died"))
 
 
-func _on_enemy_spawner_spawn_enemy(from:Vector2)->void:
-	_spawn_enemy(from)
+func _on_enemy_spawner_spawn_enemy(from:Vector2, sphere_index:int)->void:
+	_spawn_enemy(from, sphere_index)
 
 
 func _on_hud_clear(location:Vector2i)->void:
-	_points_occupied[location].kill()
+	_points_occupied[_current_sphere_index][location].kill()
+
+
+func _on_thread_gate_use_gate()->void:
+	print("use gate")

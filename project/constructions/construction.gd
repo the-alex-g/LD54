@@ -6,6 +6,7 @@ signal died
 enum {ANCHOR_TOP, ANCHOR_BOTTOM, ANCHOR_LEFT, ANCHOR_RIGHT, ANCHOR_SIDE, ANCHOR_ALL, ANCHOR_NONE}
 
 var anchor : int
+var sphere_index := -1
 
 
 func set_anchors(anchors:Array)->void:

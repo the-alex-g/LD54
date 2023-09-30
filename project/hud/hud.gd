@@ -13,12 +13,15 @@ const CONSTRUCTIONS := [
 	{"name":"Seeker", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":2, "threads":2}, "path":"res://constructions/seeker.tscn"},
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{"light":10, "chitin":20, "threads":30}, "path":"res://constructions/thread_gate.tscn"}
 ]
 
 var _build_location := Vector2i.ZERO
 var _anchors := []
-var _resources := {"light":4, "chitin":4, "threads":4,}
+var _resources := [{"light":4, "chitin":4, "threads":4,}]
 var _can_build := true
+var _current_sphere_index := -1
+var _connected_spheres := []
 
 @onready var _build_list : ItemList = $Control/BuildList
 @onready var _chitin_label : Label = $HBoxContainer/TickLabel
@@ -70,6 +73,9 @@ func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
 							can_build_construction = true
 							break
 		
+		if construction.name == "Thread Gate" and _connected_spheres.has(_current_sphere_index):
+			can_build_construction = false
+		
 		if can_build_construction:
 			_add_building_to_list(construction)
 
@@ -78,7 +84,7 @@ func _can_afford_construction(cost:Dictionary)->bool:
 	var can_afford_construction := true
 	
 	for resource in cost:
-		if _resources[resource] < cost[resource]:
+		if _resources[_current_sphere_index][resource] < cost[resource]:
 			can_afford_construction = false
 			break
 	
@@ -99,14 +105,14 @@ func _get_construction_by_name(construction_name:String)->Dictionary:
 
 func _spend_resources(cost:Dictionary)->void:
 	for resource in cost:
-		_resources[resource] -= cost[resource]
+		_resources[_current_sphere_index][resource] -= cost[resource]
 	_update_resource_labels()
 
 
 func _update_resource_labels()->void:
-	_chitin_label.text = str(_resources.chitin)
-	_thread_label.text = str(_resources.threads)
-	_light_label.text = str(_resources.light)
+	_chitin_label.text = str(_resources[_current_sphere_index].chitin)
+	_thread_label.text = str(_resources[_current_sphere_index].threads)
+	_light_label.text = str(_resources[_current_sphere_index].light)
 
 
 func _get_shared_anchors(x:Array, y:Array)->Array:
@@ -129,8 +135,8 @@ func _get_shared_anchors(x:Array, y:Array)->Array:
 	return shared_anchors
 
 
-func _on_world_update_resources(resource:String)->void:
-	_resources[resource] += 1
+func _on_world_update_resources(resource:String, sphere_index:int)->void:
+	_resources[sphere_index][resource] += 1
 	_update_resource_labels()
 
 
@@ -143,9 +149,17 @@ func _on_world_build_invalid(location:Vector2i)->void:
 
 func _on_build_list_item_selected(index:int)->void:
 	var selected_name := _build_list.get_item_text(index)
-	if selected_name != "Clear Space":
+	if selected_name == "Clear Space":
+		clear.emit(_build_location)
+	else:
 		var selected_info := _get_construction_by_name(selected_name)
 		_spend_resources(selected_info.cost)
 		build.emit(selected_info.path, _build_location, _get_shared_anchors(selected_info.anchors, _anchors))
-	else:
-		clear.emit(_build_location)
+
+
+func _on_world_changed_spheres(new_sphere_index:int)->void:
+	_current_sphere_index = new_sphere_index
+
+
+func _on_world_update_connected_spheres(connected_spheres:Array)->void:
+	_connected_spheres = connected_spheres

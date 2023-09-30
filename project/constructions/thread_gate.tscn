@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cshkw0cn2p6uy"]
+
+[ext_resource type="Script" path="res://constructions/thread_gate.gd" id="1_2ykpc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ejand"]
+size = Vector2(16, 32)
+
+[node name="ThreadGate" type="Node2D"]
+script = ExtResource("1_2ykpc")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_ejand")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Area2D" to="." method="_on_area_2d_body_exited"]

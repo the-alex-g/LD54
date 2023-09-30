@@ -2,7 +2,7 @@ class_name Seeker
 extends Construction
 
 var target : Enemy
-var potential_targets : Array[Enemy] = []
+var potential_targets := []
 
 
 func _process(delta:float)->void:

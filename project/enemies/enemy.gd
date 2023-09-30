@@ -8,6 +8,7 @@ signal died
 var target : Construction = null
 var potential_targets := []
 var _can_damage := true
+var sphere_index := -1
 
 @onready var _cooldown_timer : Timer = $CooldownTimer
 
