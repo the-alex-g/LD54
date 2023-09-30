@@ -44,17 +44,25 @@ func _update_build_anchors(at:Vector2)->void:
 	_update_build_anchors(_player.global_position)
 
 
+func _build_construction(path:String, location:Vector2i, anchors:Array)->void:
+	var construction : Construction = load(path).instantiate()
+	construction.global_position = _tilemap.map_to_local(location)
+	add_child(construction)
+	construction.call_deferred("set_anchors", anchors)
+
+
 func _on_player_build()->void:
 	open_build_menu.emit()
 
 
-func _on_hud_build(info:Dictionary, location:Vector2i, anchors:Array)->void:
-	var construction : Construction = load(info.path).instantiate()
-	construction.global_position = _tilemap.map_to_local(location)
-	add_child(construction)
-	construction.call_deferred("set_anchors", anchors)
+func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
+	_build_construction(path, location, anchors)
 	_player.paused = false
 
 
 func _on_hud_build_abort()->void:
 	_player.paused = false
+
+
+func _on_player_resource_collected(resource_type:String)->void:
+	update_resources.emit(resource_type)

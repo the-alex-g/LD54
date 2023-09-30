@@ -5,15 +5,16 @@ signal build(info, location, anchors)
 signal build_abort
 
 const CONSTRUCTIONS := [
-	{"name":"Top", "anchors":[Construction.ANCHOR_TOP], "anchors_exclude":[]},
-	{"name":"Bottom", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[]},
-	{"name":"Side", "anchors":[Construction.ANCHOR_SIDE], "anchors_exclude":[]},
-	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "path":"res://constructions/glowing_algae.tscn"}
+	{"name":"Top", "anchors":[Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{}},
+	{"name":"Bottom", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":1}},
+	{"name":"Side", "anchors":[Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{}},
+	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"}
 ]
 
 var _build_location := Vector2i.ZERO
 var _build_menu_open := false : set = _set_build_menu_open
 var _anchors := []
+var _resources := {"light":0, "chitin":0, "threads":0,}
 
 @onready var _build_list : ItemList = $Control/BuildList
 @onready var _build_menu : ItemList = $Control/BuildMenu
@@ -34,34 +35,47 @@ func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
 	
 	for construction in CONSTRUCTIONS:
 		var can_build_construction := false
-		for anchor in construction.anchors_exclude:
-			match anchor:
-				Construction.ANCHOR_ALL:
-					if anchors.size() > 0:
-						break
-				Construction.ANCHOR_SIDE:
-					if anchors.has(Construction.ANCHOR_LEFT) or anchors.has(Construction.ANCHOR_RIGHT):
-						break
-				_:
-					if anchors.has(anchor):
-						break
-		for anchor in construction.anchors:
-			match anchor:
-				Construction.ANCHOR_ALL:
-					if anchors.size() > 0:
-						can_build_construction = true
-						break
-				Construction.ANCHOR_SIDE:
-					if anchors.has(Construction.ANCHOR_LEFT) or anchors.has(Construction.ANCHOR_RIGHT):
-						can_build_construction = true
-						break
-				_:
-					if anchors.has(anchor):
-						can_build_construction = true
-						break
+		
+		if _can_afford_construction(construction.cost):
+			for anchor in construction.anchors_exclude:
+				match anchor:
+					Construction.ANCHOR_ALL:
+						if anchors.size() > 0:
+							break
+					Construction.ANCHOR_SIDE:
+						if anchors.has(Construction.ANCHOR_LEFT) or anchors.has(Construction.ANCHOR_RIGHT):
+							break
+					_:
+						if anchors.has(anchor):
+							break
+			for anchor in construction.anchors:
+				match anchor:
+					Construction.ANCHOR_ALL:
+						if anchors.size() > 0:
+							can_build_construction = true
+							break
+					Construction.ANCHOR_SIDE:
+						if anchors.has(Construction.ANCHOR_LEFT) or anchors.has(Construction.ANCHOR_RIGHT):
+							can_build_construction = true
+							break
+					_:
+						if anchors.has(anchor):
+							can_build_construction = true
+							break
 		
 		if can_build_construction:
 			_add_building_to_list(construction)
+
+
+func _can_afford_construction(cost:Dictionary)->bool:
+	var can_afford_construction := true
+	
+	for resource in cost:
+		if _resources[resource] < cost[resource]:
+			can_afford_construction = false
+			break
+	
+	return can_afford_construction
 
 
 func _add_building_to_list(building:Dictionary)->void:
@@ -74,6 +88,11 @@ func _get_construction_by_name(construction_name:String)->Dictionary:
 			return construction
 	
 	return {}
+
+
+func _spend_resources(cost:Dictionary)->void:
+	for resource in cost:
+		_resources[resource] -= cost[resource]
 
 
 func _set_build_menu_open(value:bool)->void:
@@ -89,12 +108,13 @@ func _on_world_open_build_menu()->void:
 	_set_build_menu_open(true)
 
 
-func _on_world_update_resources(new_resources:Dictionary)->void:
-	pass # Replace with function body.
+func _on_world_update_resources(resource:String)->void:
+	_resources[resource] += 1
 
 
 func _on_build_menu_item_selected(index:int)->void:
 	var selected_name := _build_menu.get_item_text(index)
 	var selected_info := _get_construction_by_name(selected_name)
-	build.emit(selected_info, _build_location, _anchors)
+	_spend_resources(selected_info.cost)
+	build.emit(selected_info.path, _build_location, _anchors)
 	_set_build_menu_open(false)

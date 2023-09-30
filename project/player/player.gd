@@ -1,7 +1,8 @@
 class_name Player
 extends CharacterBody2D
 
-signal build()
+signal build
+signal resource_collected(resource_type)
 
 @export var speed := 150.0
 @export var squish := 1
@@ -50,3 +51,7 @@ func _set_x_direction(value:int)->void:
 	if x_direction != value:
 		x_direction = value
 		get_tree().create_tween().set_trans(Tween.TRANS_QUAD).tween_property(_sprite, "scale", Vector2(x_direction, 1), 0.5)
+
+
+func collect(resource:String)->void:
+	resource_collected.emit(resource)
