@@ -1,7 +1,6 @@
 class_name Player
 extends CharacterBody2D
 
-signal build
 signal resource_collected(resource_type)
 
 @export var speed := 150.0
@@ -36,9 +35,6 @@ func _process_actions(delta:float)->void:
 	
 	velocity = lerp(velocity, movement * speed, squish * delta)
 	
-	if Input.is_action_just_pressed("build"):
-		_build()
-	
 	if Input.is_action_just_pressed("attack") and _can_attack:
 		_attack()
 
@@ -52,11 +48,6 @@ func _attack()->void:
 	_can_attack = false
 	await get_tree().create_timer(cooldown_time).timeout
 	_can_attack = true
-
-
-func _build()->void:
-	_set_paused(true)
-	build.emit()
 
 
 func _set_paused(value:bool)->void:

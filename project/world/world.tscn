@@ -29,7 +29,5 @@ format = 2
 [connection signal="open_build_menu" from="." to="HUD" method="_on_world_open_build_menu"]
 [connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
 [connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]
-[connection signal="build" from="Player" to="." method="_on_player_build"]
 [connection signal="resource_collected" from="Player" to="." method="_on_resource_collected"]
 [connection signal="build" from="HUD" to="." method="_on_hud_build"]
-[connection signal="build_abort" from="HUD" to="." method="_on_hud_build_abort"]

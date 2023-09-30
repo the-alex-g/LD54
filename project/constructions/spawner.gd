@@ -24,7 +24,3 @@ func _on_timer_timeout()->void:
 
 func _on_child_died()->void:
 	children -= 1
-
-
-func _draw():
-	draw_circle(Vector2.ZERO, 8, Color.ORANGE)

@@ -17,7 +17,6 @@ var _enemies : Array[Enemy] = []
 
 
 func _ready()->void:
-	_spawn_enemy()
 	_generate_bubble(Vector2i.ZERO, 8)
 	_update_build_anchors(_player.global_position)
 
@@ -113,17 +112,8 @@ func _on_enemy_died(enemy:Enemy)->void:
 	_enemies.erase(enemy)
 
 
-func _on_player_build()->void:
-	open_build_menu.emit()
-
-
 func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
 	_build_construction(path, location, anchors)
-	_player.paused = false
-
-
-func _on_hud_build_abort()->void:
-	_player.paused = false
 
 
 func _on_resource_collected(resource_type:String)->void:
