@@ -1,8 +1,10 @@
 class_name Player
 extends CharacterBody2D
 
+signal build()
+
 @export var speed := 150.0
-@export var squish := 1dddd
+@export var squish := 1
 
 var x_direction := 1 : set = _set_x_direction
 
@@ -25,6 +27,13 @@ func _process_actions(delta:float)->void:
 		_set_x_direction(sign(movement.x))
 	
 	velocity = lerp(velocity, movement * speed, squish * delta)
+	
+	if Input.is_action_just_pressed("build"):
+		_build()
+
+
+func _build()->void:
+	build.emit()
 
 
 func _set_x_direction(value:int)->void:
