@@ -3,7 +3,7 @@ extends Node2D
 signal update_anchors(anchors, location)
 signal open_build_menu
 signal update_resources(new_resources)
-signal build_invalid
+signal build_invalid(location)
 signal construction_built
 signal construction_destroyed
 
@@ -38,7 +38,7 @@ func _update_build_anchors(at:Vector2)->void:
 	var valid_build_anchors := []
 	
 	if _points_occupied.has(map_coords):
-		build_invalid.emit()
+		build_invalid.emit(map_coords)
 	else:
 		if _tilemap.get_cell_source_id(0, map_coords + Vector2i.DOWN) > -1:
 			valid_build_anchors.append(Construction.ANCHOR_BOTTOM)
@@ -141,15 +141,15 @@ func _on_resource_collected(resource_type:String)->void:
 
 
 func _on_construction_died(construction:Construction)->void:
-	_points_occupied.erase(construction)
+	_points_occupied.erase(_tilemap.local_to_map(construction.global_position))
 	if construction is Generator:
-			_update_harvester_targets()
+		_update_harvester_targets()
 	elif construction is Jellyfish:
-			_jellyfish.erase(construction)
+		_jellyfish.erase(construction)
 	elif construction is Harvester:
-			_harvesters.erase(construction)
+		_harvesters.erase(construction)
 	elif construction is Seeker:
-			_seekers.erase(construction)
+		_seekers.erase(construction)
 	
 	construction_destroyed.emit()
 	_update_enemy_targets()
@@ -161,3 +161,7 @@ func _on_spawner_spawn(path:String, from:Vector2, spawner:Spawner)->void:
 
 func _on_enemy_spawner_spawn_enemy(from:Vector2)->void:
 	_spawn_enemy(from)
+
+
+func _on_hud_clear(location:Vector2i)->void:
+	_points_occupied[location].kill()

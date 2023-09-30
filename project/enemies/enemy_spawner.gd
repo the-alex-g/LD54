@@ -21,7 +21,7 @@ func _update_spawn_rate()->void:
 
 
 func _on_timer_timeout():
-	spawn_enemy.emit(global_position)
+	spawn_enemy.emit(global_position + Vector2.RIGHT.rotated(TAU * randf()) * randf() * 64)
 	_spawn_timer.start(_spawn_rate)
 
 

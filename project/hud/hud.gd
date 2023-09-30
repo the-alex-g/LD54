@@ -2,6 +2,7 @@ class_name HUD
 extends CanvasLayer
 
 signal build(info, location, anchors)
+signal clear(location)
 
 const CONSTRUCTIONS := [
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"chitin":2, "threads":2}, "path":"res://constructions/glowing_algae.tscn"},
@@ -113,13 +114,18 @@ func _on_world_update_resources(resource:String)->void:
 	_update_resource_labels()
 
 
-func _on_world_build_invalid()->void:
+func _on_world_build_invalid(location:Vector2i)->void:
 	_build_list.clear()
+	_build_location = location
+	_build_list.add_item("Clear Space")
 	_can_build = false
 
 
 func _on_build_list_item_selected(index:int)->void:
 	var selected_name := _build_list.get_item_text(index)
-	var selected_info := _get_construction_by_name(selected_name)
-	_spend_resources(selected_info.cost)
-	build.emit(selected_info.path, _build_location, _anchors)
+	if selected_name != "Clear Space":
+		var selected_info := _get_construction_by_name(selected_name)
+		_spend_resources(selected_info.cost)
+		build.emit(selected_info.path, _build_location, _anchors)
+	else:
+		clear.emit(_build_location)
