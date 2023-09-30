@@ -5,11 +5,9 @@ signal build(info, location, anchors)
 signal build_abort
 
 const CONSTRUCTIONS := [
-	{"name":"Top", "anchors":[Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{}},
-	{"name":"Bottom", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":1}},
-	{"name":"Side", "anchors":[Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{}},
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"},
 	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{}, "path":"res://constructions/harvester.tscn"},
+	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{}, "path":"res://constructions/harvester_spawn.tscn"},
 ]
 
 var _build_location := Vector2i.ZERO

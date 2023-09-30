@@ -53,7 +53,7 @@ func _update_build_anchors(at:Vector2)->void:
 	_update_build_anchors(_player.global_position)
 
 
-func _build_construction(path:String, location:Vector2i, anchors:Array)->void:
+func _build_construction(path:String, location:Vector2i, anchors:Array)->Construction:
 	var construction : Construction = load(path).instantiate()
 	construction.global_position = _tilemap.map_to_local(location)
 	if anchors.size() > 0:
@@ -67,8 +67,13 @@ func _build_construction(path:String, location:Vector2i, anchors:Array)->void:
 		construction.resource_collected.connect(_on_resource_collected)
 		_harvesters.append(construction)
 	
+	if construction is Spawner:
+		construction.spawn.connect(_on_spawner_spawn)
+	
 	_update_harvester_targets()
 	_update_enemy_targets()
+	
+	return construction
 
 
 func _update_harvester_targets()->void:
@@ -80,8 +85,9 @@ func _update_harvester_targets()->void:
 func _get_generator_locations()->Array[Vector2]:
 	var generator_locations : Array[Vector2] = []
 	for location in _points_occupied:
-		if _points_occupied[location] is Generator:
-			generator_locations.append(_tilemap.map_to_local(location))
+		if is_instance_valid(_points_occupied[location]):
+			if _points_occupied[location] is Generator:
+				generator_locations.append(_tilemap.map_to_local(location))
 	return generator_locations
 
 
@@ -92,7 +98,7 @@ func _spawn_enemy()->void:
 	enemy.died.connect(_on_enemy_died.bind(enemy))
 	
 	if _points_occupied.size() > 0:
-		enemy.potential_targets = _points_occupied.values
+		enemy.potential_targets = _points_occupied.values()
 
 
 func _update_enemy_targets()->void:
@@ -130,3 +136,7 @@ func _on_construction_died(construction:Construction)->void:
 		_update_harvester_targets()
 	if construction is Harvester:
 		_harvesters.erase(construction)
+
+
+func _on_spawner_spawn(path:String, from:Vector2, spawner:Spawner)->void:
+	_build_construction(path, _tilemap.local_to_map(from), [Construction.ANCHOR_NONE]).died.connect(Callable(spawner, "_on_child_died"))

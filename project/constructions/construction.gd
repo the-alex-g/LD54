@@ -24,7 +24,6 @@ func set_anchors(anchors:Array)->void:
 
 func damage(amount:int)->void:
 	health -= amount
-	print(name, ": ", health, " left!")
 	if health <= 0:
 		_die()
 
