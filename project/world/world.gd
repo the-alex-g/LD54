@@ -11,7 +11,8 @@ signal build_invalid
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
 
-var _points_occupied : PackedVector2Array = []
+var _points_occupied : Dictionary = {}
+var _harvesters : Array[Harvester] = []
 
 
 func _ready()->void:
@@ -53,8 +54,25 @@ func _update_build_anchors(at:Vector2)->void:
 func _build_construction(path:String, location:Vector2i, anchors:Array)->void:
 	var construction : Construction = load(path).instantiate()
 	construction.global_position = _tilemap.map_to_local(location)
+	if anchors.size() > 0:
+		_points_occupied[location] = construction
 	add_child(construction)
 	construction.call_deferred("set_anchors", anchors)
+	
+	if construction is Harvester:
+		construction.resource_collected.connect(_on_resource_collected)
+		_harvesters.append(construction)
+	
+	for harvester in _harvesters:
+		harvester.potential_targets = _get_generator_locations()
+
+
+func _get_generator_locations()->Array[Vector2]:
+	var generator_locations : Array[Vector2] = []
+	for location in _points_occupied:
+		if _points_occupied[location] is Generator:
+			generator_locations.append(_tilemap.map_to_local(location))
+	return generator_locations
 
 
 func _on_player_build()->void:
@@ -63,7 +81,6 @@ func _on_player_build()->void:
 
 func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
 	_build_construction(path, location, anchors)
-	_points_occupied.append(location)
 	_player.paused = false
 
 
@@ -71,5 +88,5 @@ func _on_hud_build_abort()->void:
 	_player.paused = false
 
 
-func _on_player_resource_collected(resource_type:String)->void:
+func _on_resource_collected(resource_type:String)->void:
 	update_resources.emit(resource_type)

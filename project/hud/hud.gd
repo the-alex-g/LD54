@@ -8,7 +8,8 @@ const CONSTRUCTIONS := [
 	{"name":"Top", "anchors":[Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{}},
 	{"name":"Bottom", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":1}},
 	{"name":"Side", "anchors":[Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{}},
-	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"}
+	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/glowing_algae.tscn"},
+	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{}, "path":"res://constructions/harvester.tscn"},
 ]
 
 var _build_location := Vector2i.ZERO
@@ -54,6 +55,10 @@ func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
 				match anchor:
 					Construction.ANCHOR_ALL:
 						if anchors.size() > 0:
+							can_build_construction = true
+							break
+					Construction.ANCHOR_NONE:
+						if anchors.size() == 0:
 							can_build_construction = true
 							break
 					Construction.ANCHOR_SIDE:
