@@ -10,5 +10,7 @@ func _process(delta:float)->void:
 		queue_free()
 
 
-func _on_body_entered(body:PhysicsBody2D)->void:
-	pass
+func _on_area_entered(area:Area2D)->void:
+	if area is Enemy:
+		area.kill()
+		queue_free()

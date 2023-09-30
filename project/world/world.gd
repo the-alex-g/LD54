@@ -13,9 +13,11 @@ signal build_invalid
 
 var _points_occupied : Dictionary = {}
 var _harvesters : Array[Harvester] = []
+var _enemies : Array[Enemy] = []
 
 
 func _ready()->void:
+	_spawn_enemy()
 	_generate_bubble(Vector2i.ZERO, 8)
 	_update_build_anchors(_player.global_position)
 
@@ -59,12 +61,20 @@ func _build_construction(path:String, location:Vector2i, anchors:Array)->void:
 	add_child(construction)
 	construction.call_deferred("set_anchors", anchors)
 	
+	construction.died.connect(_on_construction_died.bind(construction))
+	
 	if construction is Harvester:
 		construction.resource_collected.connect(_on_resource_collected)
 		_harvesters.append(construction)
 	
+	_update_harvester_targets()
+	_update_enemy_targets()
+
+
+func _update_harvester_targets()->void:
+	var generator_locations := _get_generator_locations()
 	for harvester in _harvesters:
-		harvester.potential_targets = _get_generator_locations()
+		harvester.potential_targets = generator_locations
 
 
 func _get_generator_locations()->Array[Vector2]:
@@ -73,6 +83,28 @@ func _get_generator_locations()->Array[Vector2]:
 		if _points_occupied[location] is Generator:
 			generator_locations.append(_tilemap.map_to_local(location))
 	return generator_locations
+
+
+func _spawn_enemy()->void:
+	var enemy : Enemy = load("res://enemies/enemy.tscn").instantiate()
+	add_child(enemy)
+	_enemies.append(enemy)
+	enemy.died.connect(_on_enemy_died.bind(enemy))
+	
+	if _points_occupied.size() > 0:
+		enemy.potential_targets = _points_occupied.values
+
+
+func _update_enemy_targets()->void:
+	var potential_targets := []
+	potential_targets.append_array(_points_occupied.values())
+	potential_targets.append_array(_harvesters)
+	for enemy in _enemies:
+		enemy.potential_targets = potential_targets
+
+
+func _on_enemy_died(enemy:Enemy)->void:
+	_enemies.erase(enemy)
 
 
 func _on_player_build()->void:
@@ -90,3 +122,11 @@ func _on_hud_build_abort()->void:
 
 func _on_resource_collected(resource_type:String)->void:
 	update_resources.emit(resource_type)
+
+
+func _on_construction_died(construction:Construction)->void:
+	_points_occupied.erase(construction)
+	if construction is Generator:
+		_update_harvester_targets()
+	if construction is Harvester:
+		_harvesters.erase(construction)
