@@ -4,8 +4,6 @@ signal update_anchors(anchors, location)
 signal open_build_menu
 signal update_resources(new_resources)
 
-enum Anchors {TOP, BOTTOM, SIDE}
-
 @export var min_bubble_radius := 8
 @export var max_bubble_radius := 16
 
@@ -31,15 +29,15 @@ func _update_build_anchors(at:Vector2)->void:
 	var valid_build_anchors := []
 	
 	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.DOWN) > -1:
-		valid_build_anchors.append(Anchors.BOTTOM)
+		valid_build_anchors.append(Construction.ANCHOR_BOTTOM)
 	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.UP) > -1:
-		valid_build_anchors.append(Anchors.TOP)
+		valid_build_anchors.append(Construction.ANCHOR_TOP)
 	if _tilemap.get_cell_source_id(0, map_coords + Vector2i.LEFT) > -1:
-		valid_build_anchors.append(Anchors.SIDE)
+		valid_build_anchors.append(Construction.ANCHOR_LEFT)
 	elif _tilemap.get_cell_source_id(0, map_coords + Vector2i.RIGHT) > -1:
-		valid_build_anchors.append(Anchors.SIDE)
+		valid_build_anchors.append(Construction.ANCHOR_RIGHT)
 	
-	update_anchors.emit(valid_build_anchors, at)
+	update_anchors.emit(valid_build_anchors, map_coords)
 	
 	# run this function every .1 seconds
 	await get_tree().create_timer(0.1).timeout
@@ -50,8 +48,11 @@ func _on_player_build()->void:
 	open_build_menu.emit()
 
 
-func _on_hud_build(object:Dictionary, location:Vector2)->void:
-	print("yay bulding")
+func _on_hud_build(info:Dictionary, location:Vector2i, anchors:Array)->void:
+	var construction : Construction = load(info.path).instantiate()
+	construction.global_position = _tilemap.map_to_local(location)
+	add_child(construction)
+	construction.call_deferred("set_anchors", anchors)
 	_player.paused = false
 
 
