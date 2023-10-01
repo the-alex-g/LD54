@@ -41,9 +41,9 @@ func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
 	_enemies.append([])
 	if go_to:
 		_change_sphere(_spheres - 1)
-	for x in range(-radius, radius + 1):
-		for y in range(-radius, radius + 1):
-			if pow(x, 2) + pow(y, 2) < pow(radius + 1, 2) and pow(x, 2) + pow(y, 2) >= pow(radius, 2):
+	for x in range(-radius - 10, radius + 1 + 10):
+		for y in range(-radius - 10, radius + 1 + 10):
+			if pow(x, 2) + pow(y, 2) >= pow(radius, 2):
 				_tilemap.set_cell(0, Vector2i(x, y) + at, 0, Vector2i.ZERO)
 	
 	var enemy_spawner : EnemySpawner = load("res://enemies/enemy_spawner.tscn").instantiate()
