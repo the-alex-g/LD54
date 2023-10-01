@@ -26,5 +26,5 @@ func _process(delta:float)->void:
 func _on_area_2d_area_entered(area:Area2D)->void:
 	if area is Enemy:
 		area.kill()
-		if randi() % 2 == 0:
+		if area.global_position.y < area.global_position.y:
 			kill()

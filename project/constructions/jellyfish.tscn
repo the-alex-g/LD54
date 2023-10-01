@@ -1,8 +1,60 @@
-[gd_scene load_steps=3 format=3 uid="uid://c71ejr38c84hw"]
+[gd_scene load_steps=11 format=3 uid="uid://c71ejr38c84hw"]
 
 [ext_resource type="Script" path="res://constructions/jellyfish.gd" id="1_2p78t"]
+[ext_resource type="Texture2D" uid="uid://dypddmuc0b217" path="res://constructions/images/jellyfish.png" id="2_3rrr4"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_edofl"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h5vp7"]
+size = Vector2(8, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hqqoc"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qaadv"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_geahy"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dwo3w"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kx626"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0x1tp"]
+atlas = ExtResource("2_3rrr4")
+region = Rect2(16, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i40ho"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hqqoc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qaadv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_geahy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dwo3w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kx626")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0x1tp")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Jellyfish" type="Node2D"]
 script = ExtResource("1_2p78t")
@@ -10,6 +62,12 @@ script = ExtResource("1_2p78t")
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_edofl")
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_h5vp7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_i40ho")
+autoplay = "default"
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]

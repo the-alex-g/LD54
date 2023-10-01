@@ -110,6 +110,7 @@ func _build_construction(path:String, location:Vector2i, anchors:Array, sphere_i
 		_update_harvester_targets()
 	elif construction is Seeker:
 		_seekers[sphere_index].append(construction)
+		_update_seeker_targets()
 	elif construction is ThreadGate:
 		_connected_spheres.append(_current_sphere_index)
 		update_connected_spheres.emit(_connected_spheres)

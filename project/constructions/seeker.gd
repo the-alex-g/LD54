@@ -9,12 +9,13 @@ var potential_targets := []
 
 func _process(delta:float)->void:
 	if is_instance_valid(target):
+		_sprite.look_at(target.global_position)
 		if global_position.distance_squared_to(target.global_position) > 5.0:
 			global_position = lerp(global_position, target.global_position, 0.9 * delta)
 		if target.global_position.x < global_position.x:
-			_sprite.flip_h = true
+			_sprite.flip_v = true
 		else:
-			_sprite.flip_h = false
+			_sprite.flip_v = false
 	else:
 		_find_new_target()
 

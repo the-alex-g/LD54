@@ -10,12 +10,14 @@ const CONSTRUCTIONS := [
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"chitin":2, "threads":2}, "path":"res://constructions/glowing_algae.tscn"},
 	{"name":"Detritivores", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "threads":2}, "path":"res://constructions/detritivores.tscn"},
 	{"name":"Mussel Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":2, "chitin":2}, "path":"res://constructions/mussel_bed.tscn"},
+	{"name":"Coral Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":3, "chitin":3, "threads":3}, "path":"res://constructions/coral_bed.tscn"},
 	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":2, "chitin":2, "threads":2}, "path":"res://constructions/harvester.tscn"},
 	{"name":"Jellyfish", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":1, "threads":2}, "path":"res://constructions/jellyfish.tscn"},
 	{"name":"Seeker", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":2, "threads":2}, "path":"res://constructions/seeker.tscn"},
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
-	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"}
+	{"name":"Jellyfish Spawn", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{"light":8, "chitin":4, "threads":8}, "path":"res://constructions/jellyfish_spawn.tscn"},
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{"light":10, "chitin":10, "threads":20}, "path":"res://constructions/thread_gate.tscn"}
 ]
 
 var _build_location := Vector2i.ZERO
@@ -35,6 +37,7 @@ var _connected_spheres := []
 
 func _ready()->void:
 	_update_resource_labels()
+	Color.GOLD
 
 
 func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
@@ -114,7 +117,7 @@ func _spend_resources(cost:Dictionary)->void:
 		else:
 			var cost_left : int = cost[resource]
 			var index := 0
-			while cost_left < 0:
+			while cost_left > 0:
 				var sphere_index : int = _connected_spheres[index % _connected_spheres.size()]
 				_resources[sphere_index][resource] -= 1
 				cost_left -= 1
