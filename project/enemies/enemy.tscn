@@ -1,8 +1,46 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctrptxbeitpg3"]
+[gd_scene load_steps=9 format=3 uid="uid://ctrptxbeitpg3"]
 
 [ext_resource type="Script" path="res://enemies/enemy.gd" id="1_s56xh"]
+[ext_resource type="Texture2D" uid="uid://6hurmaxtr2c8" path="res://enemies/anglerfish.png" id="2_2h2c2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3l7s8"]
+radius = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1j8dy"]
+atlas = ExtResource("2_2h2c2")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51ei0"]
+atlas = ExtResource("2_2h2c2")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_445uu"]
+atlas = ExtResource("2_2h2c2")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_04qi0"]
+atlas = ExtResource("2_2h2c2")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g3ehs"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1j8dy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51ei0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_445uu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04qi0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Enemy" type="Area2D"]
 script = ExtResource("1_s56xh")
@@ -12,5 +50,10 @@ shape = SubResource("CircleShape2D_3l7s8")
 
 [node name="CooldownTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_g3ehs")
+autoplay = "default"
 
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

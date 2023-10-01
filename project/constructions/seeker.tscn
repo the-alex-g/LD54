@@ -1,8 +1,68 @@
-[gd_scene load_steps=3 format=3 uid="uid://ccpsy25pmskwu"]
+[gd_scene load_steps=12 format=3 uid="uid://ccpsy25pmskwu"]
 
 [ext_resource type="Script" path="res://constructions/seeker.gd" id="1_o1vsv"]
+[ext_resource type="Texture2D" uid="uid://uobwykgehp3d" path="res://constructions/images/viperfish.png" id="2_8nwhh"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_cqiu5"]
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kgrv2"]
+radius = 4.0
+height = 18.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hxk0k"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mfrn8"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdv0w"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ge62t"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kthlf"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0shpe"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_poiu2"]
+atlas = ExtResource("2_8nwhh")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a7uy5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hxk0k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mfrn8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gdv0w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ge62t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kthlf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0shpe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_poiu2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Seeker" type="Node2D"]
 script = ExtResource("1_o1vsv")
@@ -10,6 +70,12 @@ script = ExtResource("1_o1vsv")
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_cqiu5")
+rotation = 1.57079
+shape = SubResource("CapsuleShape2D_kgrv2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_a7uy5")
+autoplay = "default"
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
