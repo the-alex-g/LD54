@@ -105,7 +105,7 @@ func _build_construction(path:String, location:Vector2i, anchors:Array, sphere_i
 	construction.died.connect(_on_construction_died.bind(construction))
 	
 	if construction is Harvester:
-		construction.resource_collected.connect(_on_resource_collected)
+		construction.resource_collected.connect(_on_resource_collected.bind(sphere_index))
 		_harvesters[sphere_index].append(construction)
 		_update_harvester_targets()
 	elif construction is Spawner:
@@ -194,8 +194,8 @@ func _on_hud_build(path:String, location:Vector2i, anchors:Array)->void:
 	_build_construction(path, location, anchors, _current_sphere_index)
 
 
-func _on_resource_collected(resource_type:String)->void:
-	update_resources.emit(resource_type, _current_sphere_index)
+func _on_resource_collected(resource_type:String, sphere_index := _current_sphere_index)->void:
+	update_resources.emit(resource_type, sphere_index)
 
 
 func _on_construction_died(construction:Construction)->void:

@@ -18,7 +18,7 @@ const CONSTRUCTIONS := [
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
 	{"name":"Jellyfish Spawn", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{"light":8, "chitin":4, "threads":8}, "path":"res://constructions/jellyfish_spawn.tscn"},
 	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"},
-	{"name":"Abyssal Thread", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/abyssal_thread.tscn"},
+	{"name":"Abyssal Thread", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"light":25, "chitin":20, "threads":30}, "path":"res://constructions/abyssal_thread.tscn"},
 ]
 
 var _build_location := Vector2i.ZERO
@@ -197,6 +197,7 @@ func _on_world_changed_spheres(new_sphere_index:int)->void:
 	if not _connected_spheres.has(new_sphere_index) and _current_sphere_index != -1:
 		_resources[new_sphere_index] = _available_resources
 		_spend_resources(_available_resources)
+	
 	
 	_current_sphere_index = new_sphere_index
 	
