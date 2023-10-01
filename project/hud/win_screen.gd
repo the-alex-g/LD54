@@ -17,4 +17,4 @@ func _on_play_again_pressed()->void:
 
 
 func _on_main_menu_pressed()->void:
-	pass # Replace with function body.
+	get_tree().change_scene_to_file("res://main_menu/main_menu.tscn")

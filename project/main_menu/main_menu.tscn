@@ -1,0 +1,69 @@
+[gd_scene load_steps=4 format=3 uid="uid://6umb6y62llw4"]
+
+[ext_resource type="PackedScene" uid="uid://dbjc6igugpqw5" path="res://ui/light_widget.tscn" id="1_0bhgo"]
+[ext_resource type="Theme" uid="uid://dijls62shadx1" path="res://ui/theme.tres" id="1_ylgek"]
+[ext_resource type="Script" path="res://main_menu/main_menu.gd" id="2_ll5fb"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_ylgek")
+script = ExtResource("2_ll5fb")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0352941, 0.0941176, 0.235294, 1)
+
+[node name="LightWidget" parent="." instance=ExtResource("1_0bhgo")]
+position = Vector2(200, 160)
+color = Color(1, 0.843137, 0, 1)
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 75.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0.690196, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 32
+text = "Limit at Infinity"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Play" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Play"
+
+[node name="Fullscreen" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+text = "Fullscreen"
+
+[connection signal="pressed" from="VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="toggled" from="VBoxContainer/Fullscreen" to="." method="_on_fullscreen_toggled"]
