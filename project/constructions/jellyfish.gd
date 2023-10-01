@@ -7,9 +7,9 @@ var _y_direction : int = sign(randf() - 0.5)
 
 
 func _ready()->void:
-	var intersection := get_world_2d().direct_space_state.intersect_ray(PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2.UP * 400, 2))
-	_bottom_limit = Vector2(intersection.position.x, intersection.position.y + 8).y
-	intersection = get_world_2d().direct_space_state.intersect_ray(PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2.DOWN * 400, 2))
+	var intersection := get_world_2d().direct_space_state.intersect_ray(PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2.UP * 400, 0b10))
+	_top_limit = Vector2(intersection.position.x, intersection.position.y + 8).y
+	intersection = get_world_2d().direct_space_state.intersect_ray(PhysicsRayQueryParameters2D.create(global_position, global_position + Vector2.DOWN * 400, 0b10))
 	_bottom_limit = Vector2(intersection.position.x, intersection.position.y - 8).y
 
 
