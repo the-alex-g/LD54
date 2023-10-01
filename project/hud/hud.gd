@@ -31,9 +31,9 @@ var _connected_spheres := []
 var _spheres_with_threads := []
 
 @onready var _build_list : ItemList = $Control/BuildList
-@onready var _chitin_label : Label = $HBoxContainer/TickLabel
-@onready var _thread_label : Label = $HBoxContainer/ThreadLabel
-@onready var _light_label : Label = $HBoxContainer/LightLabel
+@onready var _chitin_label : Label = $HBoxContainer/Tick/TickLabel
+@onready var _thread_label : Label = $HBoxContainer/Threads/ThreadLabel
+@onready var _light_label : Label = $HBoxContainer/Light/LightLabel
 @onready var _gate_menu : GateMenu = $GateMenu
 
 

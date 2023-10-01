@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bufrsqup7745s"]
+[gd_scene load_steps=7 format=3 uid="uid://bufrsqup7745s"]
 
 [ext_resource type="Script" path="res://hud/gate_menu.gd" id="1_qpwjg"]
+[ext_resource type="Theme" uid="uid://dijls62shadx1" path="res://ui/theme.tres" id="1_tnh4a"]
 
 [sub_resource type="Animation" id="Animation_th0jn"]
 length = 0.001
@@ -100,6 +101,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_tnh4a")
 color = Color(0.0352941, 0.0941176, 0.235294, 1)
 script = ExtResource("1_qpwjg")
 
@@ -118,8 +120,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -102.0
-offset_top = -31.0
+offset_left = -107.0
+offset_top = -36.0
+offset_right = -5.0
+offset_bottom = -5.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "New Sphere"

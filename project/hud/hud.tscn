@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cwbv68d7g3kqc"]
+[gd_scene load_steps=7 format=3 uid="uid://cwbv68d7g3kqc"]
 
 [ext_resource type="Script" path="res://hud/hud.gd" id="1_unrdn"]
+[ext_resource type="Theme" uid="uid://dijls62shadx1" path="res://ui/theme.tres" id="2_67p71"]
 [ext_resource type="Texture2D" uid="uid://cedbk88odemas" path="res://hud/chitin.png" id="2_dct8p"]
 [ext_resource type="Texture2D" uid="uid://dissdnn8eqfni" path="res://hud/threads.png" id="3_f2dgb"]
 [ext_resource type="Texture2D" uid="uid://b7n2k5tvys27o" path="res://hud/light.png" id="4_155q0"]
@@ -9,27 +10,13 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_unrdn")
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="BuildList" type="ItemList" parent="Control"]
-layout_mode = 1
-anchors_preset = 9
-anchor_bottom = 1.0
-offset_right = 100.0
-grow_vertical = 2
-allow_search = false
-
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 100.0
+offset_left = 1.0
+offset_bottom = 32.0
 grow_horizontal = 2
+theme = ExtResource("2_67p71")
 alignment = 1
 
 [node name="Tick" type="TextureRect" parent="HBoxContainer"]
@@ -37,24 +24,71 @@ texture_filter = 1
 layout_mode = 2
 texture = ExtResource("2_dct8p")
 
-[node name="TickLabel" type="Label" parent="HBoxContainer"]
-layout_mode = 2
+[node name="TickLabel" type="Label" parent="HBoxContainer/Tick"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Threads" type="TextureRect" parent="HBoxContainer"]
 texture_filter = 1
 layout_mode = 2
 texture = ExtResource("3_f2dgb")
 
-[node name="ThreadLabel" type="Label" parent="HBoxContainer"]
-layout_mode = 2
+[node name="ThreadLabel" type="Label" parent="HBoxContainer/Threads"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Light" type="TextureRect" parent="HBoxContainer"]
 texture_filter = 1
 layout_mode = 2
 texture = ExtResource("4_155q0")
 
-[node name="LightLabel" type="Label" parent="HBoxContainer"]
-layout_mode = 2
+[node name="LightLabel" type="Label" parent="HBoxContainer/Light"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_67p71")
+
+[node name="BuildList" type="ItemList" parent="Control"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 65.0
+grow_vertical = 2
+allow_search = false
 
 [node name="GateMenu" parent="." instance=ExtResource("5_2yuij")]
 

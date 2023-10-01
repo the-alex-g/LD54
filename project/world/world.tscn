@@ -16,6 +16,21 @@ texture = ExtResource("2_41yr6")
 physics_layer_0/collision_layer = 3
 sources/0 = SubResource("TileSetAtlasSource_ubqeg")
 
+[sub_resource type="Animation" id="Animation_vnprp"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.0470588, 0.164706, 0.317647, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_rx5sn"]
 resource_name = "background_color_shift"
 length = 90.0
@@ -32,21 +47,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Color(0.0470588, 0.164706, 0.317647, 1), Color(0.0705882, 0.239216, 0.458824, 1), Color(0.0470588, 0.184314, 0.321569, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_vnprp"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Background:color")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0.0470588, 0.164706, 0.317647, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mcfqn"]
