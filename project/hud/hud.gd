@@ -21,6 +21,7 @@ const CONSTRUCTIONS := [
 var _build_location := Vector2i.ZERO
 var _anchors := []
 var _resources := [{"light":4, "chitin":4, "threads":4,}]
+var _available_resources := {"light":0, "chitin":0, "threads":0}
 var _can_build := true
 var _current_sphere_index := -1
 var _connected_spheres := []
@@ -87,7 +88,7 @@ func _can_afford_construction(cost:Dictionary)->bool:
 	var can_afford_construction := true
 	
 	for resource in cost:
-		if _resources[_current_sphere_index][resource] < cost[resource]:
+		if _available_resources[resource] < cost[resource]:
 			can_afford_construction = false
 			break
 	
@@ -108,14 +109,25 @@ func _get_construction_by_name(construction_name:String)->Dictionary:
 
 func _spend_resources(cost:Dictionary)->void:
 	for resource in cost:
-		_resources[_current_sphere_index][resource] -= cost[resource]
+		if not _connected_spheres.has(_current_sphere_index):
+			_resources[_current_sphere_index][resource] -= cost[resource]
+		else:
+			var cost_left : int = cost[resource]
+			var index := 0
+			while cost_left < 0:
+				var sphere_index : int = _connected_spheres[index % _connected_spheres.size()]
+				_resources[sphere_index][resource] -= 1
+				cost_left -= 1
+				index += 1
+	
+	_update_available_resources()
 	_update_resource_labels()
 
 
 func _update_resource_labels()->void:
-	_chitin_label.text = str(_resources[_current_sphere_index].chitin)
-	_thread_label.text = str(_resources[_current_sphere_index].threads)
-	_light_label.text = str(_resources[_current_sphere_index].light)
+	_chitin_label.text = str(_available_resources.chitin)
+	_thread_label.text = str(_available_resources.threads)
+	_light_label.text = str(_available_resources.light)
 
 
 func _get_shared_anchors(x:Array, y:Array)->Array:
@@ -138,8 +150,21 @@ func _get_shared_anchors(x:Array, y:Array)->Array:
 	return shared_anchors
 
 
+func _update_available_resources()->void:
+	_available_resources = {"chitin":0, "light":0, "threads":0}
+	for i in _resources.size():
+		if (_connected_spheres.has(i) and _connected_spheres.has(_current_sphere_index)) or i == _current_sphere_index:
+			_available_resources.chitin += _resources[i].chitin
+			_available_resources.threads += _resources[i].threads
+			_available_resources.light += _resources[i].light
+
+
 func _on_world_update_resources(resource:String, sphere_index:int)->void:
 	_resources[sphere_index][resource] += 1
+	if sphere_index == _current_sphere_index:
+		_update_available_resources()
+	elif _connected_spheres.has(sphere_index) and _connected_spheres.has(_current_sphere_index):
+		_update_available_resources()
 	_update_resource_labels()
 
 
@@ -164,10 +189,14 @@ func _on_build_list_item_selected(index:int)->void:
 
 func _on_world_changed_spheres(new_sphere_index:int)->void:
 	_current_sphere_index = new_sphere_index
+	_update_available_resources()
+	_update_resource_labels()
 
 
 func _on_world_update_connected_spheres(connected_spheres:Array)->void:
 	_connected_spheres = connected_spheres
+	_update_available_resources()
+	_update_resource_labels()
 
 
 func _on_world_open_gate_menu(number_of_spheres:int)->void:
