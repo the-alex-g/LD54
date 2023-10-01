@@ -1,6 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://xr8hoh6hb21j"]
+[gd_scene load_steps=3 format=3 uid="uid://xr8hoh6hb21j"]
 
 [ext_resource type="Script" path="res://constructions/abyssal_thread.gd" id="1_buyfl"]
+[ext_resource type="Texture2D" uid="uid://db8607yajckw0" path="res://constructions/images/abyssal_threads.png" id="2_vhlfn"]
 
 [node name="AbyssalThread" type="Node2D"]
+z_index = -1
 script = ExtResource("1_buyfl")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_vhlfn")
+offset = Vector2(0, -156)
