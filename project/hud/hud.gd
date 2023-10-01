@@ -17,7 +17,7 @@ const CONSTRUCTIONS := [
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
 	{"name":"Jellyfish Spawn", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{"light":8, "chitin":4, "threads":8}, "path":"res://constructions/jellyfish_spawn.tscn"},
-	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"},
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{"light":10, "chitin":10, "threads":20}, "path":"res://constructions/thread_gate.tscn"},
 	{"name":"Abyssal Thread", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"light":25, "chitin":20, "threads":30}, "path":"res://constructions/abyssal_thread.tscn"},
 ]
 
