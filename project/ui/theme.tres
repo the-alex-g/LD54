@@ -1,0 +1,21 @@
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://dijls62shadx1"]
+
+[ext_resource type="FontFile" uid="uid://b6on2h0kxsatg" path="res://ui/young_serif_regular.ttf" id="1_ywc5i"]
+[ext_resource type="StyleBox" uid="uid://3buihglyebm0" path="res://ui/default_stylebox.tres" id="2_ixcpb"]
+[ext_resource type="StyleBox" uid="uid://cxke53f3fe85k" path="res://ui/pressed_stylebox.tres" id="3_ynpmr"]
+
+[resource]
+default_font = ExtResource("1_ywc5i")
+default_font_size = 8
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(0, 0.690196, 1, 1)
+Button/colors/font_pressed_color = Color(0.027451, 0.176471, 0.0235294, 1)
+Button/constants/h_separation = 0
+Button/constants/icon_max_width = 0
+Button/constants/outline_size = 0
+Button/font_sizes/font_size = 8
+Button/fonts/font = ExtResource("1_ywc5i")
+Button/styles/hover = ExtResource("2_ixcpb")
+Button/styles/normal = ExtResource("2_ixcpb")
+Button/styles/pressed = ExtResource("3_ynpmr")
+ItemList/styles/panel = ExtResource("2_ixcpb")

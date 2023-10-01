@@ -28,6 +28,7 @@ animations = [{
 }]
 
 [node name="Player" type="CharacterBody2D"]
+z_index = 1
 texture_filter = 1
 script = ExtResource("1_j6b6t")
 speed = 75.0

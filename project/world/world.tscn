@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://cnaq4kembliio"]
+[gd_scene load_steps=11 format=3 uid="uid://cnaq4kembliio"]
 
 [ext_resource type="Script" path="res://world/world.gd" id="1_dd1xr"]
 [ext_resource type="Texture2D" uid="uid://c7erpspbqd4sc" path="res://world/tiles.png" id="2_41yr6"]
 [ext_resource type="PackedScene" uid="uid://b4wxacw1wwcej" path="res://player/player.tscn" id="3_xwo8a"]
 [ext_resource type="PackedScene" uid="uid://cwbv68d7g3kqc" path="res://hud/hud.tscn" id="4_8figk"]
+[ext_resource type="AudioStream" uid="uid://c2vkpb63nxp6c" path="res://sound/main_loop.ogg" id="5_8gq3i"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ubqeg"]
 texture = ExtResource("2_41yr6")
@@ -84,6 +85,10 @@ format = 2
 libraries = {
 "": SubResource("AnimationLibrary_mcfqn")
 }
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_8gq3i")
+autoplay = true
 
 [connection signal="build_invalid" from="." to="HUD" method="_on_world_build_invalid"]
 [connection signal="changed_spheres" from="." to="HUD" method="_on_world_changed_spheres"]

@@ -39,7 +39,6 @@ var _spheres_with_threads := []
 
 func _ready()->void:
 	_update_resource_labels()
-	Color.GOLD
 
 
 func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
