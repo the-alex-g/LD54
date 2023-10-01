@@ -23,6 +23,7 @@ anchors_preset = 9
 anchor_bottom = 1.0
 offset_right = 100.0
 grow_vertical = 2
+allow_search = false
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchors_preset = 10

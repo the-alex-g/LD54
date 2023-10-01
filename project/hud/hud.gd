@@ -158,6 +158,8 @@ func _on_build_list_item_selected(index:int)->void:
 		var selected_info := _get_construction_by_name(selected_name)
 		_spend_resources(selected_info.cost)
 		build.emit(selected_info.path, _build_location, _get_shared_anchors(selected_info.anchors, _anchors))
+	_build_list.deselect_all()
+	_build_list.release_focus()
 
 
 func _on_world_changed_spheres(new_sphere_index:int)->void:
