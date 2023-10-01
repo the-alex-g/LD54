@@ -87,7 +87,9 @@ libraries = {
 
 [connection signal="build_invalid" from="." to="HUD" method="_on_world_build_invalid"]
 [connection signal="changed_spheres" from="." to="HUD" method="_on_world_changed_spheres"]
+[connection signal="game_won" from="." to="HUD" method="_on_world_game_won"]
 [connection signal="open_gate_menu" from="." to="HUD" method="_on_world_open_gate_menu"]
+[connection signal="update_abyssal_threads" from="." to="HUD" method="_on_world_update_abyssal_threads"]
 [connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
 [connection signal="update_connected_spheres" from="." to="HUD" method="_on_world_update_connected_spheres"]
 [connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]

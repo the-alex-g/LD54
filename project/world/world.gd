@@ -8,6 +8,8 @@ signal construction_destroyed(sphere_index)
 signal changed_spheres(new_sphere_index, sphere_connected)
 signal update_connected_spheres(connected_spheres)
 signal open_gate_menu(spheres)
+signal update_abyssal_threads(spheres_with_threads)
+signal game_won
 
 @export var min_sphere_radius := 4
 @export var max_sphere_radius := 8
@@ -21,6 +23,8 @@ var _seekers := []
 var _spheres := 0
 var _current_sphere_index := -1
 var _connected_spheres := []
+var _enemy_spawners := {}
+var _abyssal_threads := []
 
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
@@ -33,15 +37,14 @@ func _ready()->void:
 	_update_build_anchors(_player.global_position)
 
 
-func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
+func _generate_sphere(at:Vector2i, radius:int)->void:
 	_spheres += 1
 	_points_occupied.append({})
 	_harvesters.append([])
 	_jellyfish.append([])
 	_seekers.append([])
 	_enemies.append([])
-	if go_to:
-		_change_sphere(_spheres - 1)
+	_change_sphere(_spheres - 1)
 	for x in range(-radius - 10, radius + 1 + 10):
 		for y in range(-radius - 10, radius + 1 + 10):
 			if pow(x, 2) + pow(y, 2) >= pow(radius, 2):
@@ -53,6 +56,7 @@ func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
 	construction_built.connect(Callable(enemy_spawner, "_on_world_construction_built"))
 	enemy_spawner.global_position = _tilemap.map_to_local(at)
 	enemy_spawner.spawn_enemy.connect(_on_enemy_spawner_spawn_enemy)
+	_enemy_spawners[_current_sphere_index] = enemy_spawner
 	_construction_container.add_child(enemy_spawner)
 
 
@@ -117,12 +121,22 @@ func _build_construction(path:String, location:Vector2i, anchors:Array, sphere_i
 		_connected_spheres.append(_current_sphere_index)
 		update_connected_spheres.emit(_connected_spheres)
 		construction.use_gate.connect(_on_thread_gate_use_gate)
+	elif construction is AbyssalThread:
+		_build_abyssal_thread(_current_sphere_index)
 	
 	_update_enemy_targets()
 	
 	construction_built.emit(sphere_index)
 	
 	return construction
+
+
+func _build_abyssal_thread(sphere_index:int)->void:
+	_enemy_spawners[sphere_index].queue_free()
+	_abyssal_threads.append(sphere_index)
+	update_abyssal_threads.emit(_abyssal_threads)
+	if _abyssal_threads.size() == 6:
+		game_won.emit()
 
 
 func _update_harvester_targets()->void:
@@ -219,7 +233,7 @@ func _on_thread_gate_use_gate()->void:
 
 
 func _on_hud_new_sphere()->void:
-	_generate_sphere(_tilemap.local_to_map(Vector2i.RIGHT * _spheres * sphere_seperation), round(lerp(min_sphere_radius, max_sphere_radius, randf())), true)
+	_generate_sphere(_tilemap.local_to_map(Vector2i.RIGHT * _spheres * sphere_seperation), round(lerp(min_sphere_radius, max_sphere_radius, randf())))
 
 
 func _on_hud_sphere_changed(new_sphere:int)->void:

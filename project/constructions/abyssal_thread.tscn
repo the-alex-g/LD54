@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://xr8hoh6hb21j"]
+
+[ext_resource type="Script" path="res://constructions/abyssal_thread.gd" id="1_buyfl"]
+
+[node name="AbyssalThread" type="Node2D"]
+script = ExtResource("1_buyfl")

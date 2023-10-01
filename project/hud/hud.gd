@@ -17,7 +17,8 @@ const CONSTRUCTIONS := [
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
 	{"name":"Jellyfish Spawn", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{"light":8, "chitin":4, "threads":8}, "path":"res://constructions/jellyfish_spawn.tscn"},
-	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"}
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"},
+	{"name":"Abyssal Thread", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{}, "path":"res://constructions/abyssal_thread.tscn"},
 ]
 
 var _build_location := Vector2i.ZERO
@@ -27,6 +28,7 @@ var _available_resources := {"light":4, "chitin":4, "threads":4}
 var _can_build := true
 var _current_sphere_index := -1
 var _connected_spheres := []
+var _spheres_with_threads := []
 
 @onready var _build_list : ItemList = $Control/BuildList
 @onready var _chitin_label : Label = $HBoxContainer/TickLabel
@@ -81,6 +83,8 @@ func _on_world_update_anchors(anchors:Array, location:Vector2i)->void:
 							break
 		
 		if construction.name == "Thread Gate" and _connected_spheres.has(_current_sphere_index):
+			can_build_construction = false
+		elif construction.name == "Abyssal Thread" and _spheres_with_threads.has(_current_sphere_index):
 			can_build_construction = false
 		
 		if can_build_construction:
@@ -221,3 +225,11 @@ func _on_gate_menu_create_new_sphere()->void:
 func _on_gate_menu_sphere_selected(sphere_index:int)->void:
 	sphere_changed.emit(sphere_index)
 	_gate_menu.play_hide()
+
+
+func _on_world_game_won()->void:
+	print("you won! Good jairb!")
+
+
+func _on_world_update_abyssal_threads(spheres_with_threads:Array)->void:
+	_spheres_with_threads = spheres_with_threads
