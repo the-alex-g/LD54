@@ -1,14 +1,78 @@
-[gd_scene load_steps=2 format=3 uid="uid://bawfac0esfht7"]
+[gd_scene load_steps=8 format=3 uid="uid://bawfac0esfht7"]
 
 [ext_resource type="Script" path="res://hud/gate_node.gd" id="1_2qeuw"]
+[ext_resource type="Texture2D" uid="uid://dka5ih2ok25br" path="res://hud/gate_node.png" id="1_pc4ed"]
 
-[node name="GateNode" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnp5e"]
+atlas = ExtResource("1_pc4ed")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="Animation" id="Animation_1pq7h"]
+resource_name = "current"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(12, 0, 12, 12)]
+}
+
+[sub_resource type="Animation" id="Animation_rbchu"]
+resource_name = "default"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 0, 12, 12)]
+}
+
+[sub_resource type="Animation" id="Animation_66wkb"]
+resource_name = "disconnected"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:texture:region")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Rect2(0, 12, 12, 12)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_abo6v"]
+_data = {
+"current": SubResource("Animation_1pq7h"),
+"default": SubResource("Animation_rbchu"),
+"disconnected": SubResource("Animation_66wkb")
+}
+
+[node name="GateNode" type="TextureRect"]
+texture_filter = 1
+offset_right = 8.0
+offset_bottom = 8.0
+texture = SubResource("AtlasTexture_wnp5e")
+stretch_mode = 2
 script = ExtResource("1_2qeuw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_abo6v")
+}
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]

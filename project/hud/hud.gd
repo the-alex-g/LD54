@@ -3,6 +3,8 @@ extends CanvasLayer
 
 signal build(info, location, anchors)
 signal clear(location)
+signal new_sphere
+signal sphere_changed(new_sphere)
 
 const CONSTRUCTIONS := [
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"chitin":2, "threads":2}, "path":"res://constructions/glowing_algae.tscn"},
@@ -13,7 +15,7 @@ const CONSTRUCTIONS := [
 	{"name":"Seeker", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":2, "threads":2}, "path":"res://constructions/seeker.tscn"},
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
-	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{"light":10, "chitin":20, "threads":30}, "path":"res://constructions/thread_gate.tscn"}
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"}
 ]
 
 var _build_location := Vector2i.ZERO
@@ -27,6 +29,7 @@ var _connected_spheres := []
 @onready var _chitin_label : Label = $HBoxContainer/TickLabel
 @onready var _thread_label : Label = $HBoxContainer/ThreadLabel
 @onready var _light_label : Label = $HBoxContainer/LightLabel
+@onready var _gate_menu : GateMenu = $GateMenu
 
 
 func _ready()->void:
@@ -163,3 +166,19 @@ func _on_world_changed_spheres(new_sphere_index:int)->void:
 
 func _on_world_update_connected_spheres(connected_spheres:Array)->void:
 	_connected_spheres = connected_spheres
+
+
+func _on_world_open_gate_menu(number_of_spheres:int)->void:
+	_gate_menu.create_sphere_map(number_of_spheres, _connected_spheres, _current_sphere_index)
+	_gate_menu.play_show()
+
+
+func _on_gate_menu_create_new_sphere()->void:
+	_resources.append({"chitin":0, "light":0, "threads":0})
+	new_sphere.emit()
+	_gate_menu.play_hide()
+
+
+func _on_gate_menu_sphere_selected(sphere_index:int)->void:
+	sphere_changed.emit(sphere_index)
+	_gate_menu.play_hide()

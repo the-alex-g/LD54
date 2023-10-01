@@ -31,9 +31,12 @@ format = 2
 
 [connection signal="build_invalid" from="." to="HUD" method="_on_world_build_invalid"]
 [connection signal="changed_spheres" from="." to="HUD" method="_on_world_changed_spheres"]
+[connection signal="open_gate_menu" from="." to="HUD" method="_on_world_open_gate_menu"]
 [connection signal="update_anchors" from="." to="HUD" method="_on_world_update_anchors"]
 [connection signal="update_connected_spheres" from="." to="HUD" method="_on_world_update_connected_spheres"]
 [connection signal="update_resources" from="." to="HUD" method="_on_world_update_resources"]
 [connection signal="resource_collected" from="Player" to="." method="_on_resource_collected"]
 [connection signal="build" from="HUD" to="." method="_on_hud_build"]
 [connection signal="clear" from="HUD" to="." method="_on_hud_clear"]
+[connection signal="new_sphere" from="HUD" to="." method="_on_hud_new_sphere"]
+[connection signal="sphere_changed" from="HUD" to="." method="_on_hud_sphere_changed"]

@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwbv68d7g3kqc"]
+[gd_scene load_steps=6 format=3 uid="uid://cwbv68d7g3kqc"]
 
 [ext_resource type="Script" path="res://hud/hud.gd" id="1_unrdn"]
 [ext_resource type="Texture2D" uid="uid://cedbk88odemas" path="res://hud/chitin.png" id="2_dct8p"]
 [ext_resource type="Texture2D" uid="uid://dissdnn8eqfni" path="res://hud/threads.png" id="3_f2dgb"]
 [ext_resource type="Texture2D" uid="uid://b7n2k5tvys27o" path="res://hud/light.png" id="4_155q0"]
+[ext_resource type="PackedScene" uid="uid://bufrsqup7745s" path="res://hud/gate_menu.tscn" id="5_2yuij"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_unrdn")
@@ -54,4 +55,8 @@ texture = ExtResource("4_155q0")
 [node name="LightLabel" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 
+[node name="GateMenu" parent="." instance=ExtResource("5_2yuij")]
+
 [connection signal="item_selected" from="Control/BuildList" to="." method="_on_build_list_item_selected"]
+[connection signal="create_new_sphere" from="GateMenu" to="." method="_on_gate_menu_create_new_sphere"]
+[connection signal="sphere_selected" from="GateMenu" to="." method="_on_gate_menu_sphere_selected"]

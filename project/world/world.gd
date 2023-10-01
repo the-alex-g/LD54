@@ -7,12 +7,11 @@ signal construction_built(sphere_index)
 signal construction_destroyed(sphere_index)
 signal changed_spheres(new_sphere_index, sphere_connected)
 signal update_connected_spheres(connected_spheres)
+signal open_gate_menu(spheres)
 
 @export var min_sphere_radius := 4
 @export var max_sphere_radius := 8
-
-@onready var _tilemap : TileMap = $TileMap
-@onready var _player : Player = $Player
+@export var sphere_seperation := 400
 
 var _points_occupied := []
 var _harvesters := []
@@ -23,6 +22,10 @@ var _spheres := 0
 var _current_sphere_index := -1
 var _connected_spheres := []
 
+@onready var _tilemap : TileMap = $TileMap
+@onready var _player : Player = $Player
+@onready var _camera : Camera2D = $Camera2D
+
 
 func _ready()->void:
 	_generate_sphere(Vector2i.ZERO, round(lerp(min_sphere_radius, max_sphere_radius, randf())))
@@ -31,8 +34,8 @@ func _ready()->void:
 
 func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
 	_spheres += 1
-	_harvesters.append([])
 	_points_occupied.append({})
+	_harvesters.append([])
 	_jellyfish.append([])
 	_seekers.append([])
 	_enemies.append([])
@@ -55,6 +58,9 @@ func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
 func _change_sphere(to:int)->void:
 	_current_sphere_index = to
 	changed_spheres.emit(_current_sphere_index)
+	_camera.position = Vector2.RIGHT * _current_sphere_index * sphere_seperation
+	_player.position = _camera.position
+	_player.velocity = Vector2.ZERO
 
 
 func _update_build_anchors(at:Vector2)->void:
@@ -206,4 +212,12 @@ func _on_hud_clear(location:Vector2i)->void:
 
 
 func _on_thread_gate_use_gate()->void:
-	print("use gate")
+	open_gate_menu.emit(_spheres)
+
+
+func _on_hud_new_sphere()->void:
+	_generate_sphere(_tilemap.local_to_map(Vector2i.RIGHT * _spheres * sphere_seperation), round(lerp(min_sphere_radius, max_sphere_radius, randf())), true)
+
+
+func _on_hud_sphere_changed(new_sphere:int)->void:
+	_change_sphere(new_sphere)
