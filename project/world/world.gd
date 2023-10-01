@@ -25,6 +25,7 @@ var _connected_spheres := []
 @onready var _tilemap : TileMap = $TileMap
 @onready var _player : Player = $Player
 @onready var _camera : Camera2D = $Camera2D
+@onready var _construction_container : Node2D = $ConstructionContainer
 
 
 func _ready()->void:
@@ -52,7 +53,7 @@ func _generate_sphere(at:Vector2i, radius:int, go_to := true)->void:
 	construction_built.connect(Callable(enemy_spawner, "_on_world_construction_built"))
 	enemy_spawner.global_position = _tilemap.map_to_local(at)
 	enemy_spawner.spawn_enemy.connect(_on_enemy_spawner_spawn_enemy)
-	add_child(enemy_spawner)
+	_construction_container.add_child(enemy_spawner)
 
 
 func _change_sphere(to:int)->void:
@@ -61,6 +62,7 @@ func _change_sphere(to:int)->void:
 	_camera.position = Vector2.RIGHT * _current_sphere_index * sphere_seperation
 	_player.position = _camera.position
 	_player.velocity = Vector2.ZERO
+	$Background.position = _player.position - Vector2(200, 160)
 
 
 func _update_build_anchors(at:Vector2)->void:
@@ -92,7 +94,7 @@ func _build_construction(path:String, location:Vector2i, anchors:Array, sphere_i
 	construction.global_position = _tilemap.map_to_local(location)
 	if anchors.size() > 0:
 		_points_occupied[sphere_index][location] = construction
-	add_child(construction)
+	_construction_container.add_child(construction)
 	construction.call_deferred("set_anchors", anchors)
 	construction.sphere_index = sphere_index
 	
@@ -143,7 +145,7 @@ func _spawn_enemy(at:Vector2, sphere_index:int)->void:
 	var enemy : Enemy = load("res://enemies/enemy.tscn").instantiate()
 	enemy.global_position = at
 	enemy.sphere_index = sphere_index
-	add_child(enemy)
+	_construction_container.add_child(enemy)
 	_enemies[sphere_index].append(enemy)
 	enemy.died.connect(_on_enemy_died.bind(enemy))
 	
@@ -153,7 +155,7 @@ func _spawn_enemy(at:Vector2, sphere_index:int)->void:
 
 func _update_enemy_targets()->void:
 	for group in _enemies:
-		var local_sphere_index = _enemies.find(group) - 1
+		var local_sphere_index = _enemies.find(group)
 		var potential_targets := []
 		potential_targets.append_array(_points_occupied[local_sphere_index].values())
 		potential_targets.append_array(_harvesters[local_sphere_index])

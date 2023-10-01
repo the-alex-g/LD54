@@ -10,20 +10,20 @@ const CONSTRUCTIONS := [
 	{"name":"Glowing Algae", "anchors":[Construction.ANCHOR_ALL], "anchors_exclude":[], "cost":{"chitin":2, "threads":2}, "path":"res://constructions/glowing_algae.tscn"},
 	{"name":"Detritivores", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "threads":2}, "path":"res://constructions/detritivores.tscn"},
 	{"name":"Mussel Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":2, "chitin":2}, "path":"res://constructions/mussel_bed.tscn"},
-	{"name":"Coral Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":3, "chitin":3, "threads":3}, "path":"res://constructions/coral_bed.tscn"},
+	{"name":"Coral Bed", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_SIDE], "anchors_exclude":[], "cost":{"light":5, "chitin":5, "threads":5}, "path":"res://constructions/coral_bed.tscn"},
 	{"name":"Harvester", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":2, "chitin":2, "threads":2}, "path":"res://constructions/harvester.tscn"},
 	{"name":"Jellyfish", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":1, "threads":2}, "path":"res://constructions/jellyfish.tscn"},
 	{"name":"Seeker", "anchors":[Construction.ANCHOR_NONE], "anchors_exclude":[Construction.ANCHOR_ALL], "cost":{"light":3, "chitin":2, "threads":2}, "path":"res://constructions/seeker.tscn"},
 	{"name":"Harvester Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":2, "chitin":8, "threads":8}, "path":"res://constructions/harvester_spawn.tscn"},
 	{"name":"Seeker Spawn", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[], "cost":{"light":4, "chitin":10, "threads":8}, "path":"res://constructions/seeker_spawn.tscn"},
 	{"name":"Jellyfish Spawn", "anchors":[Construction.ANCHOR_BOTTOM, Construction.ANCHOR_TOP], "anchors_exclude":[], "cost":{"light":8, "chitin":4, "threads":8}, "path":"res://constructions/jellyfish_spawn.tscn"},
-	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{"light":10, "chitin":10, "threads":20}, "path":"res://constructions/thread_gate.tscn"}
+	{"name":"Thread Gate", "anchors":[Construction.ANCHOR_BOTTOM], "anchors_exclude":[Construction.ANCHOR_TOP], "cost":{}, "path":"res://constructions/thread_gate.tscn"}
 ]
 
 var _build_location := Vector2i.ZERO
 var _anchors := []
 var _resources := [{"light":4, "chitin":4, "threads":4,}]
-var _available_resources := {"light":0, "chitin":0, "threads":0}
+var _available_resources := {"light":4, "chitin":4, "threads":4}
 var _can_build := true
 var _current_sphere_index := -1
 var _connected_spheres := []
@@ -191,7 +191,12 @@ func _on_build_list_item_selected(index:int)->void:
 
 
 func _on_world_changed_spheres(new_sphere_index:int)->void:
+	if not _connected_spheres.has(new_sphere_index) and _current_sphere_index != -1:
+		_resources[new_sphere_index] = _available_resources
+		_spend_resources(_available_resources)
+	
 	_current_sphere_index = new_sphere_index
+	
 	_update_available_resources()
 	_update_resource_labels()
 

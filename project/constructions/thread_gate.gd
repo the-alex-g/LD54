@@ -11,11 +11,11 @@ func _process(_delta:float)->void:
 		use_gate.emit()
 
 
-func _on_area_2d_body_entered(body:PhysicsBody2D)->void:
+func _on_area_2d_body_entered(body)->void:
 	if body is Player:
 		_is_player_in_area = true
 
 
-func _on_area_2d_body_exited(body:PhysicsBody2D)->void:
+func _on_area_2d_body_exited(body)->void:
 	if body is Player:
 		_is_player_in_area = false
