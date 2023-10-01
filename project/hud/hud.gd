@@ -227,7 +227,7 @@ func _on_gate_menu_sphere_selected(sphere_index:int)->void:
 
 
 func _on_world_game_won()->void:
-	print("you won! Good jairb!")
+	$WinScreen.fade_in()
 
 
 func _on_world_update_abyssal_threads(spheres_with_threads:Array)->void:
